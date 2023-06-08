@@ -3,14 +3,17 @@
 #'
 #' Given the location of the mode to be at each dose level, the unimodal
 #' isotonically transformed values are calculated. A frequentist model
-#' averaging approach is used to obtain the  estimated efficacy probability.
-#' @param obs Number of patients with events
-#' @param n Number of patients
-#' @return Estimated probability
+#' averaging approach is used to obtain the estimated efficacy probability.
+#' @usage
+#' multi.iso(obs, n)
+#' @param obs Number of patients with events.
+#' @param n Number of patients.
+#' @return The \code{multi.iso} returns a vector of estimated probabilities for
+#' each dose level.
 #' @import Iso
 #' @export
 
-multi.iso <- function(obs,n)
+multi.iso <- function(obs, n)
 {
   prob   <- obs/n
   ld     <- length(prob)

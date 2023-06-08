@@ -4,10 +4,13 @@
 #' Fractional polynomial (FP) logistic regression with two degrees of freedom is
 #' performed to estimate the efficacy probabilities. The Best fitting FP model is
 #' chosen by not taking into account the closed testing procedure.
-#' @param obs Number of patients with events
-#' @param n Number of patients
-#' @param dose Dose level
-#' @return Estimated probability
+#' @usage
+#' fp.logit(obs, n, dose)
+#' @param obs Number of patients with events.
+#' @param n Number of patients.
+#' @param dose Dose levels to be investigated.
+#' @return The \code{fp.logit} returns a vector of estimated probabilities for
+#' each dose level.
 #' @import mfp
 #' @export
 

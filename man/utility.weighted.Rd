@@ -18,7 +18,8 @@ utility.weighted(probt, probe, w1, w2, tox.upper)
 \item{tox.upper}{Upper bound of toxicity probability.}
 }
 \value{
-Utility value
+The \code{utility.weighted} returns a utility value defined by
+the weighted function.
 }
 \description{
 Given estimated toxicity and efficacy probabilities, the utility which is

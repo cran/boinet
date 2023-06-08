@@ -16,7 +16,7 @@ utility.scoring(probt, probe, psi00, psi11)
 \item{psi11}{Score for toxicity=yes and efficacy=yes.}
 }
 \value{
-Utility value
+The \code{utility.scoring} returns a utility value defined by the scoring.
 }
 \description{
 Given estimated toxicity and efficacy probabilities, the utility which is

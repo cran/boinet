@@ -3,26 +3,23 @@
 #'
 #' Given non-informative prior probabilities of the six hypotheses, a grid
 #' search approach is used to find the optimal threshold values.
-#' @param pi Prior probability of 6 hypotheses (default: c(1/6,1/6,1/6,1/6,1/6,1/6))
-#' @param phi Target toxicity probability
-#' @param phi1 Lower bound of toxicity probability
-#' @param phi2 Upper bound of toxicity probability
-#' @param delta Target efficacy probability
-#' @param delta1 Lower bound of efficacy probability
-#' @param n Number of patients (default: 100)
-#' @return Optimal threshold values
+#' @usage
+#' gridoptim(pi=rep(1/6,6), phi, phi1, phi2, delta, delta1, n=100)
+#' @param pi Prior probability of 6 hypotheses. The default value is
+#' \code{pi=rep(1/6,6)}.
+#' @param phi Target toxicity probability.
+#' @param phi1 Lower bound of toxicity probability.
+#' @param phi2 Upper bound of toxicity probability.
+#' @param delta Target efficacy probability.
+#' @param delta1 Lower bound of efficacy probability.
+#' @param n Number of patients. The default value is \code{n=100}.
+#' @return The \code{gridoptim} returns optimal threshold values of upper and
+#' lower toxicity/efficacy boundaries used in dose-escalation procedure.
 #' @examples
 #' gridoptim(phi=0.33,phi1=0.033,phi2=0.462,delta=0.70,delta1=0.42);
 #' @export
 
-gridoptim <- function(
-               pi     = rep(1/6,6),
-               phi,
-               phi1,
-               phi2,
-               delta,
-               delta1,
-               n      = 100)
+gridoptim <- function(pi=rep(1/6,6), phi, phi1, phi2, delta, delta1, n=100)
 {
   if(!((phi1<phi)&(phi<phi2))){
     stop("Design parameters must satisfy a condition of phi1 < phi < phi2.")

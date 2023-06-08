@@ -3,13 +3,16 @@
 #'
 #' Given estimated toxicity and efficacy probabilities, the utility which is
 #' defined by truncated linear functions is Calculated.
+#' @usage
+#' utility.truncated.linear(probt, probe, tlow, tupp, elow, eupp)
 #' @param probt Estimated toxicity probability
 #' @param probe Estimated efficacy probability
 #' @param tlow Lower threshold of toxicity linear truncated function.
 #' @param tupp Upper threshold of toxicity linear truncated function.
 #' @param elow Lower threshold of efficacy linear truncated function.
 #' @param eupp Upper threshold of efficacy linear truncated function.
-#' @return Utility value
+#' @return The \code{utility.truncated.linear} returns a utility value defined by
+#' the truncated linear functions.
 #' @export
 
 utility.truncated.linear <- function(probt,probe,tlow,tupp,elow,eupp)

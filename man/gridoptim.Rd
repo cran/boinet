@@ -4,25 +4,27 @@
 \alias{gridoptim}
 \title{Grid search to find optimal threshold values of toxicity and efficacy interval}
 \usage{
-gridoptim(pi = rep(1/6, 6), phi, phi1, phi2, delta, delta1, n = 100)
+gridoptim(pi=rep(1/6,6), phi, phi1, phi2, delta, delta1, n=100)
 }
 \arguments{
-\item{pi}{Prior probability of 6 hypotheses (default: c(1/6,1/6,1/6,1/6,1/6,1/6))}
+\item{pi}{Prior probability of 6 hypotheses. The default value is
+\code{pi=rep(1/6,6)}.}
 
-\item{phi}{Target toxicity probability}
+\item{phi}{Target toxicity probability.}
 
-\item{phi1}{Lower bound of toxicity probability}
+\item{phi1}{Lower bound of toxicity probability.}
 
-\item{phi2}{Upper bound of toxicity probability}
+\item{phi2}{Upper bound of toxicity probability.}
 
-\item{delta}{Target efficacy probability}
+\item{delta}{Target efficacy probability.}
 
-\item{delta1}{Lower bound of efficacy probability}
+\item{delta1}{Lower bound of efficacy probability.}
 
-\item{n}{Number of patients (default: 100)}
+\item{n}{Number of patients. The default value is \code{n=100}.}
 }
 \value{
-Optimal threshold values
+The \code{gridoptim} returns optimal threshold values of upper and
+lower toxicity/efficacy boundaries used in dose-escalation procedure.
 }
 \description{
 Given non-informative prior probabilities of the six hypotheses, a grid

@@ -53,25 +53,26 @@
 #' efficacy outcome. Weibull distribution is used when
 #' \code{gen.event.time="weibull"}. Uniform distribution is used when
 #' \code{gen.event.time="uniform"}. The default value is
-#' \code{gen.event.time=weibull}.
+#' \code{gen.event.time="weibull"}.
 #' @param accrual Accrual rate (days) (average number of days necessary to
 #' enroll one patient).
 #' @param gen.enroll.time Method to generate enrollment time. Uniform
 #' distribution is used when \code{gen.enroll.time="uniform"}. Exponential
 #' distribution is used when \code{gen.enroll.time="exponential"}. The default
 #' value is \code{gen.enroll.time="uniform"}.
-#' @param stopping.npts Early study termination criteria. If the number of
-#' patients at the current dose reaches this criteria, the study is terminated.
-#' The default value is \code{stopping.npts=size.cohort*n.cohort}.
+#' @param stopping.npts Early study termination criteria for the number of
+#' patients. If the number of patients at the current dose reaches this
+#' criteria, the study is terminated. The default value is
+#' \code{stopping.npts=size.cohort*n.cohort}.
 #' @param stopping.prob.T Early study termination criteria for toxicity,
 #' taking a value between 0 and 1. If the posterior probability that toxicity
-#' outcome is less than the target toxicity probability (phi) is larger than
+#' outcome is less than the target toxicity probability (\code{phi}) is larger than
 #' this criteria, the dose levels are eliminated from the study. The default
 #' value is \code{stopping.prob.T=0.95}.
 #' @param stopping.prob.E Early study termination criteria for efficacy,
 #' taking a value between 0 and 1. If the posterior probability that efficacy
-#' outcome is less than the minimum efficacy probability (delta1) is larger
-#' then this criteria, the dose levels are eliminated from the study.
+#' outcome is less than the minimum efficacy probability (\code{delta1}) is larger
+#' than this criteria, the dose levels are eliminated from the study.
 #' The default value is \code{stopping.prob.E=0.99}.
 #' @param estpt.method Method to estimate the efficacy probability. Fractional
 #' polynomial logistic regression is used when \code{estpt.method="fp.logistic"}.
@@ -145,15 +146,14 @@
 #' \item{prop.stop}{Percentage of times that the study was terminated.}
 #' \item{duration}{Expected study duration (days)}
 #' @references
-#' Kentaro Takeda, Satoshi Morita and Masataka Taguri. TITE-BOIN-ET:
-#' Time-to-event Bayesian optimal interval design to accelerate dose-finding
-#' based on both efficacy and toxicity outcomes. *Pharmaceutical Statistics*
-#' 2020; 19(3):335-349.
+#' Takeda K, Morita S, Taguri M. TITE-BOIN-ET: Time-to-event Bayesian optimal
+#' interval design to accelerate dose-finding based on both efficacy and
+#' toxicity outcomes. *Pharmaceutical Statistics* 2020; 19(3):335-349.
 #'
-#' Yusuke Yamaguchi, Kentaro Takeda, Satoshi Yoshida and Kazushi Maruo.
-#' Optimal biological dose selection in dose-finding trials with
-#' model-assisted designs based on efficacy and toxicity: a simulation study.
-#' *Journal of Biopharmaceutical Statistics* 2023; doi: 10.1080/10543406.2023.2202259.
+#' Yamaguchi Y, Takeda K, Yoshida S, Maruo K. Optimal biological dose selection
+#' in dose-finding trials with model-assisted designs based on efficacy and
+#' toxicity: a simulation study. *Journal of Biopharmaceutical Statistics* 2023;
+#' doi: 10.1080/10543406.2023.2202259.
 #' @examples
 #' n.dose      <- 6
 #' start.dose  <- 1

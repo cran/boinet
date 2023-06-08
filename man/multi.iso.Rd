@@ -7,15 +7,16 @@
 multi.iso(obs, n)
 }
 \arguments{
-\item{obs}{Number of patients with events}
+\item{obs}{Number of patients with events.}
 
-\item{n}{Number of patients}
+\item{n}{Number of patients.}
 }
 \value{
-Estimated probability
+The \code{multi.iso} returns a vector of estimated probabilities for
+each dose level.
 }
 \description{
 Given the location of the mode to be at each dose level, the unimodal
 isotonically transformed values are calculated. A frequentist model
-averaging approach is used to obtain the  estimated efficacy probability.
+averaging approach is used to obtain the estimated efficacy probability.
 }

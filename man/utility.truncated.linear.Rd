@@ -20,7 +20,8 @@ utility.truncated.linear(probt, probe, tlow, tupp, elow, eupp)
 \item{eupp}{Upper threshold of efficacy linear truncated function.}
 }
 \value{
-Utility value
+The \code{utility.truncated.linear} returns a utility value defined by
+the truncated linear functions.
 }
 \description{
 Given estimated toxicity and efficacy probabilities, the utility which is

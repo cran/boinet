@@ -3,11 +3,13 @@
 #'
 #' Given estimated toxicity and efficacy probabilities, the utility which is
 #' defined by scoring is calculated.
+#' @usage
+#' utility.scoring(probt, probe, psi00, psi11)
 #' @param probt Estimated toxicity probability.
 #' @param probe Estimated efficacy probability.
 #' @param psi00 Score for toxicity=no and efficacy=no.
 #' @param psi11 Score for toxicity=yes and efficacy=yes.
-#' @return Utility value
+#' @return The \code{utility.scoring} returns a utility value defined by the scoring.
 #' @export
 
 utility.scoring <- function(probt,probe,psi00,psi11)

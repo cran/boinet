@@ -1,7 +1,15 @@
 
 #' Optimal biological dose selection
 #'
-#' Optimal biological dose (OBD) is selected based on a method specified.
+#' Optimal biological dose (OBD) is selected by a method specified.
+#' @usage
+#' obd.select(
+#'   probt, probe, method,
+#'   phi, phi1, phi2, delta, delta1,
+#'   tterm, eterm, stopT, stopE,
+#'   w1, w2,
+#'   plow.ast, pupp.ast, qlow.ast, qupp.ast,
+#'   psi00, psi11)
 #' @param probt Estimated toxicity probability.
 #' @param probe Estimated efficacy probability.
 #' @param method Method used for OBD selection.
@@ -22,7 +30,7 @@
 #' @param qupp.ast Upper threshold of efficacy linear truncated function.
 #' @param psi00 Score for toxicity=no and efficacy=no.
 #' @param psi11 Score for toxicity=yes and efficacy=yes.
-#' @return Optimal biological dose
+#' @return The \code{obd.select} returns an optimal biological dose.
 #' @export
 
 obd.select <- function(

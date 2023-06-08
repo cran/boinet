@@ -7,14 +7,15 @@
 fp.logit(obs, n, dose)
 }
 \arguments{
-\item{obs}{Number of patients with events}
+\item{obs}{Number of patients with events.}
 
-\item{n}{Number of patients}
+\item{n}{Number of patients.}
 
-\item{dose}{Dose level}
+\item{dose}{Dose levels to be investigated.}
 }
 \value{
-Estimated probability
+The \code{fp.logit} returns a vector of estimated probabilities for
+each dose level.
 }
 \description{
 Fractional polynomial (FP) logistic regression with two degrees of freedom is

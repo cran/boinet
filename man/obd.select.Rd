@@ -5,27 +5,12 @@
 \title{Optimal biological dose selection}
 \usage{
 obd.select(
-  probt,
-  probe,
-  method,
-  phi,
-  phi1,
-  phi2,
-  delta,
-  delta1,
-  tterm,
-  eterm,
-  stopT,
-  stopE,
-  w1,
-  w2,
-  plow.ast,
-  pupp.ast,
-  qlow.ast,
-  qupp.ast,
-  psi00,
-  psi11
-)
+  probt, probe, method,
+  phi, phi1, phi2, delta, delta1,
+  tterm, eterm, stopT, stopE,
+  w1, w2,
+  plow.ast, pupp.ast, qlow.ast, qupp.ast,
+  psi00, psi11)
 }
 \arguments{
 \item{probt}{Estimated toxicity probability.}
@@ -69,8 +54,8 @@ obd.select(
 \item{psi11}{Score for toxicity=yes and efficacy=yes.}
 }
 \value{
-Optimal biological dose
+The \code{obd.select} returns an optimal biological dose.
 }
 \description{
-Optimal biological dose (OBD) is selected based on a method specified.
+Optimal biological dose (OBD) is selected by a method specified.
 }
