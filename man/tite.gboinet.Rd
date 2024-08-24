@@ -168,7 +168,8 @@ enroll one patient).}
 level}
 \item{prop.select}{Percentage of times that each dose level was selected as
 optimal biological dose.}
-\item{prop.stop}{Percentage of times that the study was terminated.}
+\item{prop.stop}{Percentage of times that the study was terminated and
+optimal biological dose was not selected.}
 \item{duration}{Expected study duration (days)}
 }
 \description{

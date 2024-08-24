@@ -147,7 +147,8 @@
 #' level}
 #' \item{prop.select}{Percentage of times that each dose level was selected as
 #' optimal biological dose.}
-#' \item{prop.stop}{Percentage of times that the study was terminated.}
+#' \item{prop.stop}{Percentage of times that the study was terminated and
+#' optimal biological dose was not selected.}
 #' \item{duration}{Expected study duration (days)}
 #' @references
 #' Takeda K, Yamaguchi Y, Taguri M, Morita S. TITE-gBOIN-ET: Time-to-event
@@ -330,6 +331,9 @@ tite.gboinet <- function(
 
     curdose <- start.dose
 
+#   early.stop <- 0
+    early.stop <- 0
+
     for(i in 1:nesc){
       dlab <- paste("Dose",curdose,sep="")
       obs.n[curdose] <- obs.n[curdose] + ncoh
@@ -455,6 +459,8 @@ tite.gboinet <- function(
       admdose <- dosen[admflg]
 
       if(sum(admflg)==0){
+#       early.stop <- 1
+        early.stop <- 1
         break
 
       }else if(sum(obs.n>=stopping.npts)>0){
@@ -466,6 +472,8 @@ tite.gboinet <- function(
           if(admflg[1]){
             curdose <- 1
           }else{
+#           early.stop <- 1
+            early.stop <- 1
             break
           }
 
@@ -484,6 +492,8 @@ tite.gboinet <- function(
           if(sum(admdose<=nxtdose)!=0){
             curdose <- max(admdose[admdose<=nxtdose])
           }else{
+#           early.stop <- 1
+            early.stop <- 1
             break
           }
       }}
@@ -509,7 +519,8 @@ tite.gboinet <- function(
       eterm.obd[i] <- 1-pbeta(delta1,po.shape1,po.shape2)
     }
 
-    if(sum(obs.n)<nmax){
+#   if(sum(obs.n)<nmax){
+    if(early.stop==1){
 
       obd[ss] <- 0
 
