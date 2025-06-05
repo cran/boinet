@@ -1,15 +1,105 @@
 
-#' Model averaging of multiple unimodal isotopic regression
+#' Model Averaging of Multiple Unimodal Isotonic Regression
 #'
-#' Given the location of the mode to be at each dose level, the unimodal
-#' isotonically transformed values are calculated. A frequentist model
-#' averaging approach is used to obtain the estimated efficacy probability.
+#' @description
+#' Performs model averaging across multiple unimodal isotonic regression models to
+#' estimate efficacy probabilities. This approach addresses the uncertainty in the location of
+#' the optimal dose by considering all possible modes (peak response locations).
+#'
+#' The method is particularly valuable when the dose-response relationship is expected
+#' to be unimodal (single peak) but the location of maximum efficacy is unknown.
+#' This commonly occurs with targeted therapies, immunotherapies, and biologics where
+#' efficacy may plateau or even decrease at very high doses due to off-target effects
+#' or immune suppression.
+#'
+#' @details
+#' **Unimodal Isotonic Regression:**
+#' Unlike standard isotonic regression which assumes monotonic relationships,
+#' unimodal isotonic regression allows for:
+#' \itemize{
+#'   \item **Increasing phase**: Response increases up to a peak
+#'   \item **Peak response**: Maximum efficacy at the mode
+#'   \item **Decreasing phase**: Response decreases beyond the peak
+#'   \item **Constraint**: Non-decreasing before mode, non-increasing after mode
+#' }
+#'
+#' **Model Ensemble Approach:**
+#' The function fits J separate unimodal models (where J = number of doses), each
+#' assuming the mode is at a different dose level:
+#' \itemize{
+#'   \item **Model 1**: Mode at dose 1 (monotonically decreasing)
+#'   \item **Model 2**: Mode at dose 2 (increase then decrease)
+#'   \item **...**
+#'   \item **Model J**: Mode at dose J (monotonically increasing)
+#' }
+#'
+#' **Model Averaging:**
+#' Given the location of the mode to be at dose level \eqn{k}, a frequentist model
+#' averaging approach is used for estimating the efficacy probability at each
+#' dose level, where the weights are calculated based on a pseudo-likelihood on
+#' the unimodal isotonic regression.
+#'
 #' @usage
 #' multi.iso(obs, n)
-#' @param obs Number of patients with events.
-#' @param n Number of patients.
+#'
+#' @param obs Numeric vector specifying the number of patients experiencing the
+#'   event of interest at each dose level. Must be
+#'   non-negative integers.
+#' @param n Numeric vector specifying the total number of patients treated at each
+#'   dose level. Must be positive integers with the same length as \code{obs}.
+#'
 #' @return The \code{multi.iso} returns a vector of estimated probabilities for
 #' each dose level.
+#'
+#' @return
+#' Numeric vector of model-averaged estimated efficacy probabilities for each dose level.
+#' The length matches the input vectors, and values are bounded between 0 and 1.
+#' The estimates incorporate uncertainty about the mode location through AIC-weighted
+#' averaging across all possible unimodal models.
+#'
+#' @examples
+#' # Basic unimodal model averaging
+#' # Scenario: Targeted therapy with efficacy peak at intermediate dose
+#'
+#' # Dose-response data showing unimodal pattern
+#' observed_responses <- c(2, 6, 12, 8, 4)  # Peak at dose 3
+#' total_patients <- c(8, 10, 15, 12, 9)
+#'
+#' # Apply multi-unimodal isotonic regression
+#' averaged_probs <- multi.iso(obs = observed_responses, n = total_patients)
+#'
+#' # Compare with simple observed probabilities
+#' simple_probs <- observed_responses / total_patients
+#'
+#' # Display comparison
+#' results <- data.frame(
+#'   Dose = 1:5,
+#'   Observed_Events = observed_responses,
+#'   Total_Patients = total_patients,
+#'   Simple_Probability = round(simple_probs, 3),
+#'   MultiIso_Probability = round(averaged_probs, 3),
+#'   Difference = round(averaged_probs - simple_probs, 3)
+#' )
+#'
+#' cat("Unimodal Model Averaging Results:\\n")
+#' print(results)
+#'
+#' @references
+#' \itemize{
+#'   \item Turner, T. R., & Wollan, P. C. (1997). Locating a maximum using
+#'         isotonic regression. \emph{Computational Statistics and Data Analysis},
+#'         25, 305-320.
+#'   \item Tjort, N. L, & Claeskens, G. (2003). Frequentist model average
+#'         estimators. \emph{Journal of the American Statistical Association},
+#'         98, 879-899.
+#'  }
+#'
+#' @seealso
+#' \code{\link[Iso]{ufit}} for underlying unimodal isotonic regression,
+#' \code{\link[Iso]{pava}} for standard isotonic regression,
+#' \code{\link{fp.logit}} for alternative dose-response modeling approach,
+#' \code{\link{obd.select}} for dose selection using estimated probabilities.
+#'
 #' @import Iso
 #' @export
 

@@ -2,230 +2,358 @@
 % Please edit documentation in R/tite.boinet.R
 \name{tite.boinet}
 \alias{tite.boinet}
-\title{Conducting simulation study of TITE-BOIN-ET design}
+\title{TITE-BOIN-ET: Time-to-Event Bayesian Optimal Interval Design}
 \usage{
 tite.boinet(
   n.dose, start.dose, size.cohort, n.cohort,
   toxprob, effprob,
-  phi=0.3, phi1=phi*0.1, phi2=phi*1.4, delta=0.6, delta1=delta*0.6,
-  alpha.T1=0.5, alpha.E1=0.5, tau.T, tau.E,
-  te.corr=0.2, gen.event.time="weibull",
-  accrual, gen.enroll.time="uniform",
-  stopping.npts=size.cohort*n.cohort,
-  stopping.prob.T=0.95, stopping.prob.E=0.99,
-  estpt.method, obd.method,
-  w1= 0.33, w2=1.09,
-  plow.ast=phi1, pupp.ast=phi2, qlow.ast=delta1/2, qupp.ast=delta,
-  psi00=40, psi11=60,
-  n.sim=1000, seed.sim=100)
+  phi = 0.3, phi1 = phi*0.1, phi2 = phi*1.4,
+  delta = 0.6, delta1 = delta*0.6,
+  alpha.T1 = 0.5, alpha.E1 = 0.5, tau.T, tau.E,
+  te.corr = 0.2, gen.event.time = "weibull",
+  accrual, gen.enroll.time = "uniform",
+  stopping.npts = size.cohort*n.cohort,
+  stopping.prob.T = 0.95, stopping.prob.E = 0.99,
+  estpt.method = "obs.prob", obd.method = "max.effprob",
+  w1 = 0.33, w2 = 1.09,
+  plow.ast = phi1, pupp.ast = phi2,
+  qlow.ast = delta1/2, qupp.ast = delta,
+  psi00 = 40, psi11 = 60,
+  n.sim = 1000, seed.sim = 100)
 }
 \arguments{
-\item{n.dose}{Number of dose.}
+\item{n.dose}{Integer specifying the number of dose levels to investigate.}
 
-\item{start.dose}{Starting dose. The lowest dose is generally recommended.}
+\item{start.dose}{Integer specifying the starting dose level (1 = lowest dose).
+Generally recommended to start at the lowest dose for safety.}
 
-\item{size.cohort}{Cohort size.}
+\item{size.cohort}{Integer specifying the number of patients per cohort.
+Commonly 3 or 6 patients, with 3 being standard for early-phase trials.}
 
-\item{n.cohort}{Number of cohort.}
+\item{n.cohort}{Integer specifying the maximum number of cohorts.
+Total sample size = size.cohort*n.cohort.}
 
-\item{toxprob}{Vector of true toxicity probability.}
+\item{toxprob}{Numeric vector of length n.dose specifying the true toxicity
+probabilities for each dose level. Used for simulation scenarios. Should
+reflect cumulative toxicity over tau.T period.}
 
-\item{effprob}{Vector of true efficacy probability.}
+\item{effprob}{Numeric vector of length n.dose specifying the true efficacy
+probabilities for each dose level. Used for simulation scenarios. Should
+reflect cumulative efficacy over tau.E period.}
 
-\item{phi}{Target toxicity probability. The default value is
-\code{phi=0.3}.}
+\item{phi}{Numeric value between 0 and 1 specifying the target
+toxicity probability. Represents the maximum acceptable toxicity rate.
+Default is 0.3 (30\%).}
 
-\item{phi1}{Highest toxicity probability that is deemed sub-therapeutic such
-that dose-escalation should be pursued. The default value is
-\code{phi1=phi*0.1}.}
+\item{phi1}{Numeric value specifying the highest toxicity
+probability that is deemed sub-therapeutic such that dose-escalation should
+be pursued. Doses with toxicity <= phi1 are considered under-dosed.
+Default is phi*0.1.}
 
-\item{phi2}{Lowest toxicity probability that is deemed overly toxic such that
-dose de-escalation is needed. The default value is \code{phi2=phi*1.4}.}
+\item{phi2}{Numeric value specifying the lowest toxicity
+probability that is deemed overly toxic such that dose de-escalation is
+needed. Doses with toxicity >= phi2 are considered over-dosed. Default is phi*1.4.}
 
-\item{delta}{Target efficacy probability. The default value is
-\code{delta=0.6}.}
+\item{delta}{Numeric value between 0 and 1 specifying the target
+efficacy probability. Represents the desired minimum efficacy rate. Default
+is 0.6 (60\%).}
 
-\item{delta1}{Minimum probability deemed efficacious such that the dose
-levels with less than delta1 are considered sub-therapeutic.
-The default value is \code{delta1=delta*0.6}.}
+\item{delta1}{Numeric value specifying the minimum probability
+deemed efficacious such that the dose levels with efficacy < delta1 are considered
+sub-therapeutic. Default is delta*0.6.}
 
-\item{alpha.T1}{Probability that toxicity event occurs in the late half of
-toxicity assessment window. The default value is \code{alpha.T1=0.5}.}
+\item{alpha.T1}{Numeric value specifying the probability that a toxicity outcome occurs
+in the late half of the toxicity assessment window. Used for event time generation.
+Default is 0.5.}
 
-\item{alpha.E1}{Probability that efficacy event occurs in the late half of
-assessment window. The default value is \code{alpha.E1=0.5}.}
+\item{alpha.E1}{Numeric value specifying the probability that an efficacy outcome
+occurs in the late half of the efficacy assessment window. Used for event
+time generation. Default is 0.5.}
 
-\item{tau.T}{Toxicity assessment windows (days).}
+\item{tau.T}{Numeric value specifying the toxicity assessment window in days.
+Should reflect the expected time course of relevant toxicities.}
 
-\item{tau.E}{Efficacy assessment windows (days).}
+\item{tau.E}{Numeric value specifying the efficacy assessment window in days.}
 
-\item{te.corr}{Correlation between toxicity and efficacy probability,
-specified as Gaussian copula parameter. The default value is
-\code{te.corr=0.2}.}
+\item{te.corr}{Numeric value between -1 and 1 specifying the correlation between
+toxicity and efficacy, specified as Gaussian copula parameter. Default is 0.2
+(weak positive correlation).}
 
-\item{gen.event.time}{Method to generate the time to first toxicity and
-efficacy outcome. Weibull distribution is used when
-\code{gen.event.time="weibull"}. Uniform distribution is used when
-\code{gen.event.time="uniform"}. The default value is
-\code{gen.event.time="weibull"}.}
+\item{gen.event.time}{Character string specifying the distribution for generating
+event times. Options are "weibull" (default) or "uniform". A bivariate
+Gaussian copula model is used to jointly generate the time to first toxicity
+and efficacy outcome, where the marginal distributions are set to Weibull
+distribution when \code{gen.event.time="weibull"}, and uniform distribution when
+\code{gen.event.time="uniform"}.}
 
-\item{accrual}{Accrual rate (days) (average number of days necessary to
-enroll one patient).}
+\item{accrual}{Numeric value specifying the accrual rate (days), which is the
+average number of days between patient enrollments. Lower values indicate
+faster accrual.}
 
-\item{gen.enroll.time}{Method to generate enrollment time. Uniform
-distribution is used when \code{gen.enroll.time="uniform"}. Exponential
-distribution is used when \code{gen.enroll.time="exponential"}. The default
-value is \code{gen.enroll.time="uniform"}.}
+\item{gen.enroll.time}{Character string specifying the distribution for enrollment
+times. Options are "uniform" (default) or "exponential". Uniform distribution
+is used when \code{gen.enroll.time="uniform"}, and exponential distribution
+is used when \code{gen.enroll.time="exponential"}.}
 
-\item{stopping.npts}{Early study termination criteria for the number of
-patients. If the number of patients at the current dose reaches this
-criteria, the study is terminated. The default value is
-\code{stopping.npts=size.cohort*n.cohort}.}
+\item{stopping.npts}{Integer specifying the maximum number of patients per dose
+for early study termination. If the number of patients at the current dose
+reaches this criteria, the study stops the enrollment and is terminated.
+Default is size.cohort*n.cohort.}
 
-\item{stopping.prob.T}{Early study termination criteria for toxicity,
-taking a value between 0 and 1. If the posterior probability that toxicity
-outcome is less than the target toxicity probability (\code{phi}) is larger than
-this criteria, the dose levels are eliminated from the study. The default
-value is \code{stopping.prob.T=0.95}.}
+\item{stopping.prob.T}{Numeric value between 0 and 1 specifying the early study
+termination threshold for toxicity. If P(toxicity > phi) > stopping.prob.T,
+the dose levels are eliminated from the investigation. Default is 0.95.}
 
-\item{stopping.prob.E}{Early study termination criteria for efficacy,
-taking a value between 0 and 1. If the posterior probability that efficacy
-outcome is less than the minimum efficacy probability (\code{delta1}) is larger
-than this criteria, the dose levels are eliminated from the study.
-The default value is \code{stopping.prob.E=0.99}.}
+\item{stopping.prob.E}{Numeric value between 0 and 1 specifying the early study
+termination threshold for efficacy. If P(efficacy < delta1) > stopping.prob.E,
+the dose levels are eliminated from the investigation. Default is 0.99.}
 
-\item{estpt.method}{Method to estimate the efficacy probability. Fractional
-polynomial logistic regression is used when \code{estpt.method="fp.logistic"}.
-Model averaging of multiple unimodal isotopic regression is used when
-\code{estpt.method="multi.iso"}. Observed efficacy probability is used when
-\code{estpt.method="obs.prob"}.}
+\item{estpt.method}{Character string specifying the method for estimating efficacy
+probabilities. Options: "obs.prob" (observed efficacy probabilitiesrates),
+"fp.logistic" (fractional polynomial), or "multi.iso" (model averaging of
+multiple unimodal isotopic regression). Default is "obs.prob".}
 
-\item{obd.method}{Method to select the optimal biological dose. Utility
-defined by weighted function is used when \code{obd.method="utility.weighted"}.
-Utility defined by truncated linear function is used when
-\code{obd.method="utility.truncated.linear"}. Utility defined by scoring is
-used when \code{obd.method="utility.scoring"}. Highest estimated efficacy
-probability is used when \code{obd.method="max.effprob"}.}
+\item{obd.method}{Character string specifying the method for OBD selection.
+Options: "utility.weighted", "utility.truncated.linear", "utility.scoring",
+or "max.effprob" (default).}
 
-\item{w1}{Weight for toxicity-efficacy trade-off in utility defined by
-weighted function. This must be specified when using
-\code{obd.method="utility.weighted"}. The default value is \code{w1=0.33}.}
+\item{w1}{Numeric value specifying the weight for toxicity-efficacy trade-off
+in "utility.weighted" method. Default is 0.33.}
 
-\item{w2}{Weight for penalty imposed on toxic doses in utility defined by
-weighted function. This must be specified when using
-\code{obd.method="utility.weighted"}. The default value is \code{w2=1.09}.}
+\item{w2}{Numeric value specifying the penalty weight for toxic doses in
+"utility.weighted" method. Default is 1.09.}
 
-\item{plow.ast}{Lower threshold of toxicity linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{plow.ast=phi1}.}
+\item{plow.ast}{Numeric value specifying the lower toxicity threshold for
+"utility.truncated.linear" method. Default is phi1.}
 
-\item{pupp.ast}{Upper threshold of toxicity linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{pupp.ast=phi2}.}
+\item{pupp.ast}{Numeric value specifying the upper toxicity threshold for
+"utility.truncated.linear" method. Default is phi2.}
 
-\item{qlow.ast}{Lower threshold of efficacy linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{qlow.ast=delta1/2}.}
+\item{qlow.ast}{Numeric value specifying the lower efficacy threshold for
+"utility.truncated.linear" method. Default is delta1/2.}
 
-\item{qupp.ast}{Upper threshold of efficacy linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{qupp.ast=delta}.}
+\item{qupp.ast}{Numeric value specifying the upper efficacy threshold for
+"utility.truncated.linear" method. Default is delta.}
 
-\item{psi00}{Score for toxicity=no and efficacy=no in utility defined by
-scoring. This must be specified when using \code{obd.method="utility.scoring"}.
-The default value is \code{psi00=40}.}
+\item{psi00}{Numeric value specifying the utility score for (toxicity=no, efficacy=no)
+in "utility.scoring" method. Default is 40.}
 
-\item{psi11}{Score for toxicity=yes and efficacy=yes in utility defined by
-scoring. This must be specified when using \code{obd.method="utility.scoring"}.
-The default value is \code{psi11=60}.}
+\item{psi11}{Numeric value specifying the utility score for (toxicity=yes, efficacy=yes)
+in "utility.scoring" method. Default is 60.}
 
-\item{n.sim}{Number of simulated trial. The default value is
-\code{n.sim=1000}.}
+\item{n.sim}{Integer specifying the number of simulated trials. Default is 1000.
+Higher values provide more stable operating characteristics.}
 
-\item{seed.sim}{Seed for random number generator. The default value is
-\code{seed.sim=100}.}
+\item{seed.sim}{Integer specifying the random seed for reproducible results.
+Default is 100.}
 }
 \value{
-The \code{tite.boinet} returns a list containing the following components:
-\item{toxprob}{True toxicity probability.}
-\item{effprob}{True efficacy probability.}
+A list object of class "tite.boinet" containing:
+\item{toxprob}{True toxicity probabilities used in simulation.}
+\item{effprob}{True efficacy probabilities used in simulation.}
 \item{phi}{Target toxicity probability.}
 \item{delta}{Target efficacy probability.}
-\item{lambda1}{Lower toxicity boundary in dose escalation/de-escalation.}
-\item{lambda2}{Upper toxicity boundary in dose escalation/de-escalation.}
-\item{eta1}{Lower efficacy boundary in dose escalation/de-escalation.}
-\item{tau.T}{Toxicity assessment windows (days).}
-\item{tau.E}{Efficacy assessment windows (days).}
-\item{accrual}{Accrual rate (days) (average number of days necessary to
-enroll one patient).}
-\item{estpt.method}{Method to estimate the efficacy probability.}
-\item{obd.method}{Method to select the optimal biological dose.}
-\item{n.patient}{Average number of patients who were treated at each dose
-level}
-\item{prop.select}{Percentage of times that each dose level was selected as
-optimal biological dose.}
-\item{prop.stop}{Percentage of times that the study was terminated and
-optimal biological dose was not selected.}
-\item{duration}{Expected study duration (days)}
+\item{lambda1}{Lower toxicity decision boundary.}
+\item{lambda2}{Upper toxicity decision boundary.}
+\item{eta1}{Lower efficacy decision boundary.}
+\item{tau.T}{Toxicity assessment window (days).}
+\item{tau.E}{Efficacy assessment window (days).}
+\item{accrual}{Accrual rate (days).}
+\item{estpt.method}{Method used for efficacy probability estimation.}
+\item{obd.method}{Method used for optimal biological dose selection.}
+\item{n.patient}{Average number of patients treated at each dose level across simulations.}
+\item{prop.select}{Percentage of simulations selecting each dose level as OBD.}
+\item{prop.stop}{Percentage of simulations terminating early without OBD selection.}
+\item{duration}{Expected trial duration in days.}
 }
 \description{
-Time-to-event Bayesian optimal interval design to accelerate dose-finding
-based on both efficacy and toxicity outcomes (TITE-BOIN-ET design) is
-implemented under a scenario
-specified. Operating characteristics of the design are summarized by the
-percentage of times that each dose level was selected as optimal biological
-dose and the average number of patients who were treated at each dose level.
+Conducts simulation studies of the TITE-BOIN-ET (Time-to-Event Bayesian Optimal
+Interval design to accelerate dose-finding based on both Efficacy and Toxicity outcomes)
+design. This advanced extension of BOIN-ET addresses the practical challenges of
+late-onset outcomes and rapid patient accrual in modern oncology trials by incorporating
+time-to-event information and allowing continuous enrollment without waiting for
+complete outcome assessment.
+
+The TITE-BOIN-ET design is particularly valuable for immunotherapy, targeted therapy,
+and other novel agents where Late-onset toxicity is common and causes major
+logistic difficulty for existing adaptive phase I trial designs, which require
+the observance of toxicity early enough to apply dose-escalation rules for new patients.
 }
 \details{
-The \code{tite.boinet} is a function which generates the operating
-characteristics of the time-to-event Bayesian optimal interval design to
-accelerate dose-finding based on both efficacy and toxicity outcomes
-(TITE-BOIN-ET design) by a simulation study. Users can specify a
-variety of study settings to simulate studies, and choose methods to estimate
-the efficacy probability and to select the optimal biological dose. The
-operating characteristics of the design are summarized by the percentage of
-times that each dose level was selected as optimal biological dose and the
-average number of patients who were treated at each dose level. The
-percentage of times that the study was terminated and the expected study
-duration are also provided.
+\strong{Key Advantages:}
+
+\strong{1. Continuous Accrual:}
+Unlike standard BOIN-ET which waits for complete outcome assessment, TITE-BOIN-ET
+allows continuous patient enrollment by utilizing both complete and pending (censored)
+outcome data. This can significantly reduce trial duration.
+
+\strong{2. Late-Onset Outcome Handling:}
+The design explicitly models time-to-event outcomes, making it suitable for:
+\itemize{
+\item Immune-related adverse events that may occur months after treatment
+\item Delayed efficacy responses common in immunotherapy
+\item Targeted agents with cumulative toxicity effects
+}
+
+\strong{3. Flexible Assessment Windows:}
+Different assessment periods for toxicity (tau.T) and efficacy (tau.E) accommodate
+the reality that safety and efficacy endpoints often have different time courses.
+
+\strong{4. Correlated Outcomes:}
+The design can model correlation between toxicity and efficacy through copula
+functions, reflecting the biological relationship between these endpoints.
+
+\strong{Statistical Methodology:}
+
+\strong{Time-to-Event Integration:}
+The design uses a weighted likelihood approach where:
+\itemize{
+\item Complete observations receive full weight
+\item Pending observations receive fractional weight based on follow-up time
+\item Weight = (observation time) / (assessment window)
+}
+
+\strong{Decision Algorithm:}
+At each interim analysis, the design:
+\enumerate{
+\item Updates outcome estimates using complete and pending data
+\item Applies the same decision boundaries as BOIN-ET (lambda1, lambda2, eta1)
+\item Makes dose escalation/de-escalation decisions
+\item Continues enrollment while maintaining safety monitoring
+}
+
+\strong{When to Choose TITE-BOIN-ET:}
+\itemize{
+\item Expected late-onset toxicity
+\item Delayed efficacy assessment
+\item Rapid accrual
+\item Trial duration is a critical constraint
+}
+
+\strong{Consider Standard BOIN-ET When:}
+\itemize{
+\item Outcomes occur within 2-4 weeks
+\item Slow accrual allows waiting for complete data
+\item Preference for simpler designs
+}
+}
+\note{
+\itemize{
+\item Accrual rate significantly impacts design performance and trial duration
+\item Early stopping rules are critical for patient safety in TITE designs
+}
 }
 \examples{
-n.dose      <- 6
+# Example 1: Immunotherapy trial with delayed immune-related toxicity
+# Scenario: CAR-T therapy with cytokine release syndrome and delayed efficacy
+
+n.dose      <- 4  # Four dose levels
 start.dose  <- 1
+size.cohort <- 6  # Larger cohorts for immunotherapy
+n.cohort    <- 8  # Total: 48 patients
+
+# CAR-T dose levels with delayed toxicity pattern
+toxprob <- c(0.10, 0.25, 0.40, 0.55)  # Including delayed immune toxicity
+effprob <- c(0.20, 0.50, 0.70, 0.75)  # Strong efficacy at higher doses
+
+# Immunotherapy-appropriate targets
+phi   <- 0.35  # Higher toxicity tolerance
+delta <- 0.60  # Target response rate
+
+# Extended assessment windows for immune effects
+tau.T   <- 84   # 12 weeks for immune-related AEs
+tau.E   <- 112  # 16 weeks for response assessment
+accrual <- 7    # Weekly enrollment
+
+# Delayed toxicity/efficacy parameters
+alpha.T1 <- 0.6  # Most toxicity in later period
+alpha.E1 <- 0.7  # Most responses delayed
+te.corr  <- 0.3  # Moderate positive correlation
+
+results_cart <- tite.boinet(
+  n.dose = n.dose, start.dose = start.dose,
+  size.cohort = size.cohort, n.cohort = n.cohort,
+  toxprob = toxprob, effprob = effprob,
+  phi = phi, delta = delta,
+  alpha.T1 = alpha.T1, alpha.E1 = alpha.E1,
+  tau.T = tau.T, tau.E = tau.E,
+  te.corr = te.corr, accrual = accrual,
+  estpt.method = "obs.prob",  # Conservative for small sample
+  obd.method = "utility.weighted",
+  w1 = 0.4, w2 = 1.2,  # Balanced approach with toxicity penalty
+  n.sim = 40
+)
+
+cat("Expected trial duration:", results_cart$duration, "days\\\\n")
+cat("OBD selection probabilities:\\\\n")
+print(results_cart$prop.select)
+
+# Example 2: Targeted therapy with rapid accrual
+# Scenario: Tyrosine kinase inhibitor with fast enrollment
+
+n.dose      <- 5
 size.cohort <- 3
-n.cohort    <- 12
+n.cohort    <- 15  # 45 patients total
 
-toxprob <- c(0.01,0.03,0.06,0.12,0.18,0.30)
-effprob <- c(0.06,0.08,0.15,0.25,0.40,0.80)
+# Targeted therapy dose-response
+toxprob <- c(0.05, 0.12, 0.22, 0.35, 0.52)
+effprob <- c(0.15, 0.35, 0.55, 0.65, 0.60)  # Plateau effect
 
-phi   <- 0.33
-delta <- 0.70
+phi   <- 0.30
+delta <- 0.50
 
-tau.T   <- 30
-tau.E   <- 45
-accrual <- 10
+# Shorter windows for targeted therapy
+tau.T   <- 28   # 4 weeks for acute toxicity
+tau.E   <- 56   # 8 weeks for response
+accrual <- 3    # Very rapid accrual (every 3 days)
 
-estpt.method <- "obs.prob"
-obd.method   <- "max.effprob"
+# More uniform timing
+alpha.T1 <- 0.5
+alpha.E1 <- 0.5
+te.corr  <- 0.1  # Weak correlation
 
-n.sim <- 10
+results_tki <- tite.boinet(
+  n.dose = n.dose, start.dose = start.dose,
+  size.cohort = size.cohort, n.cohort = n.cohort,
+  toxprob = toxprob, effprob = effprob,
+  phi = phi, delta = delta,
+  alpha.T1 = alpha.T1, alpha.E1 = alpha.E1,
+  tau.T = tau.T, tau.E = tau.E,
+  te.corr = te.corr, accrual = accrual,
+  gen.event.time = "weibull",
+  gen.enroll.time = "exponential",  # Variable enrollment
+  estpt.method = "fp.logistic",  # Smooth modeling
+  obd.method = "max.effprob",
+  n.sim = 40
+)
 
-tite.boinet(
-  n.dose=n.dose, start.dose=start.dose,
-  size.cohort=size.cohort, n.cohort=n.cohort,
-  toxprob=toxprob, effprob=effprob,
-  phi=phi, delta=delta,
-  tau.T=tau.T, tau.E=tau.E, accrual=accrual,
-  estpt.method=estpt.method, obd.method=obd.method,
-  n.sim=n.sim)
+# Compare duration to standard BOIN-ET (hypothetical)
+standard_duration <- tau.E + (n.cohort * size.cohort * accrual)
+cat("TITE duration:", results_tki$duration, "days\\\\n")
+cat("Standard BOIN-ET would take ~", standard_duration, "days\\\\n")
+cat("Time savings:", standard_duration - results_tki$duration, "days\\\\n")
+
 }
 \references{
-Takeda K, Morita S, Taguri M. TITE-BOIN-ET: Time-to-event Bayesian optimal
-interval design to accelerate dose-finding based on both efficacy and
-toxicity outcomes. \emph{Pharmaceutical Statistics} 2020; 19(3):335-349.
-
-Yamaguchi Y, Takeda K, Yoshida S, Maruo K. Optimal biological dose selection
-in dose-finding trials with model-assisted designs based on efficacy and
-toxicity: a simulation study. \emph{Journal of Biopharmaceutical Statistics} 2023;
-doi: 10.1080/10543406.2023.2202259.
+\itemize{
+\item Takeda, K., Morita, S., & Taguri, M. (2020). TITE-BOIN-ET: Time-to-event
+Bayesian optimal interval design to accelerate dose-finding based on both
+efficacy and toxicity outcomes. \emph{Pharmaceutical Statistics}, 19(3), 335-349.
+\item Yamaguchi, Y., Takeda, K., Yoshida, S., & Maruo, K. (2024). Optimal
+biological dose selection in dose-finding trials with model-assisted designs
+based on efficacy and toxicity: a simulation study. \emph{Journal of
+Biopharmaceutical Statistics}, 34(3), 379-393.
 }
+}
+\seealso{
+\code{\link{boinet}} for the standard version without time-to-event modeling,
+\code{\link{tite.gboinet}} for the generalized version with ordinal outcomes,
+\code{\link{obd.select}} for optimal biological dose selection methods,
+\code{\link{utility.weighted}}, \code{\link{utility.truncated.linear}},
+\code{\link{utility.scoring}} for utility functions.
+}
+\keyword{TITE-BOIN-ET}
+\keyword{accelerated-design}
+\keyword{clinical-trials}
+\keyword{dose-finding}
+\keyword{time-to-event}

@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Complete Quarto Workflow for BOIN-ET Reports</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Complete Quarto Workflow for BOIN-ET
+Reports</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boinet)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load additional packages for reporting</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">&quot;gt&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">library</span>(gt)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">&quot;ggplot2&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>This vignette demonstrates how to create complete, reproducible
+clinical trial reports using the boinet package with Quarto. The
+workflow covers everything from simulation to final report generation
+suitable for regulatory submissions, academic publications, and internal
+documentation.</p>
+<div id="helper-functions-for-reports" class="section level2">
+<h2>Helper Functions for Reports</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract operating characteristics data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>extract_oc_data <span class="ot">&lt;-</span> <span class="cf">function</span>(boinet_result) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  dose_levels <span class="ot">&lt;-</span> <span class="fu">names</span>(boinet_result<span class="sc">$</span>n.patient)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dose_level =</span> dose_levels,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicity_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>toxprob),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">efficacy_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>effprob),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_patients =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>n.patient),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">selection_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>prop.select),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Create summary statistics</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>create_summary_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(boinet_result) {</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  oc_data <span class="ot">&lt;-</span> <span class="fu">extract_oc_data</span>(boinet_result)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  optimal_dose <span class="ot">&lt;-</span> oc_data<span class="sc">$</span>dose_level[<span class="fu">which.max</span>(oc_data<span class="sc">$</span>selection_prob)]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">optimal_dose =</span> optimal_dose,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_selection_prob =</span> <span class="fu">max</span>(oc_data<span class="sc">$</span>selection_prob),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">early_stop_rate =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>prop.stop),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>duration),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_patients =</span> <span class="fu">sum</span>(oc_data<span class="sc">$</span>n_patients),</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">design_type =</span> <span class="fu">class</span>(boinet_result)[<span class="dv">1</span>]</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Create formatted text summaries</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>create_text_summary <span class="ot">&lt;-</span> <span class="cf">function</span>(boinet_result) {</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  stats <span class="ot">&lt;-</span> <span class="fu">create_summary_stats</span>(boinet_result)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;The %s design selected dose level %s in %.1f%% of trials, with an average trial duration of %.0f days and early stopping rate of %.1f%%.&quot;</span>,</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">toupper</span>(<span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>, <span class="st">&quot;-&quot;</span>, stats<span class="sc">$</span>design_type)),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    stats<span class="sc">$</span>optimal_dose,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    stats<span class="sc">$</span>max_selection_prob,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    stats<span class="sc">$</span>avg_duration,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    stats<span class="sc">$</span>early_stop_rate</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Create design parameters table</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>create_design_table <span class="ot">&lt;-</span> <span class="cf">function</span>(result) {</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  design_params <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;Target Toxicity Rate (φ)&quot;</span>, <span class="st">&quot;Target Efficacy Rate (δ)&quot;</span>, </span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;Lower Toxicity Boundary (λ₁)&quot;</span>, <span class="st">&quot;Upper Toxicity Boundary (λ₂)&quot;</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;Efficacy Boundary (η₁)&quot;</span>, <span class="st">&quot;Early Stop Rate (%)&quot;</span>, </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;Average Duration (days)&quot;</span>, <span class="st">&quot;Toxicity Assessment Window (days)&quot;</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;Efficacy Assessment Window (days)&quot;</span>, <span class="st">&quot;Accrual Rate (days)&quot;</span>),</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">Value =</span> <span class="fu">c</span>(result<span class="sc">$</span>phi, result<span class="sc">$</span>delta, result<span class="sc">$</span>lambda1, result<span class="sc">$</span>lambda2,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>              result<span class="sc">$</span>eta1, result<span class="sc">$</span>prop.stop, result<span class="sc">$</span>duration,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>              result<span class="sc">$</span>tau.T, result<span class="sc">$</span>tau.E, result<span class="sc">$</span>accrual),</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format values</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  design_params<span class="sc">$</span>Value <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(design_params<span class="sc">$</span>Value), <span class="dv">3</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (gt_available) {</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    design_params <span class="sc">%&gt;%</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tab_header</span>(</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;TITE-BOIN-ET Design Parameters&quot;</span>,</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Based on&quot;</span>, result<span class="sc">$</span>n.sim, <span class="st">&quot;simulated trials&quot;</span>)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="st">&quot;Value&quot;</span>, <span class="at">decimals =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;left&quot;</span>, <span class="at">columns =</span> <span class="st">&quot;Parameter&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> <span class="st">&quot;Value&quot;</span>)</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fallback to basic table</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(design_params)</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Create operating characteristics table</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>create_oc_table <span class="ot">&lt;-</span> <span class="cf">function</span>(result) {</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  dose_levels <span class="ot">&lt;-</span> <span class="fu">names</span>(result<span class="sc">$</span>n.patient)</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>  oc_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Dose Level</span><span class="st">`</span> <span class="ot">=</span> dose_levels,</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">True Toxicity Probability</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(result<span class="sc">$</span>toxprob), <span class="dv">3</span>),</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">True Efficacy Probability</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(result<span class="sc">$</span>effprob), <span class="dv">3</span>),</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Average N Treated</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(result<span class="sc">$</span>n.patient), <span class="dv">1</span>),</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Selection Probability (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(result<span class="sc">$</span>prop.select), <span class="dv">1</span>),</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">check.names =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (gt_available) {</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>    oc_data <span class="sc">%&gt;%</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tab_header</span>(</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Operating Characteristics&quot;</span>,</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>        <span class="at">subtitle =</span> <span class="st">&quot;TITE-BOIN-ET Design Simulation Results&quot;</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;True Toxicity Probability&quot;</span>, <span class="st">&quot;True Efficacy Probability&quot;</span>), <span class="at">decimals =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="st">&quot;Average N Treated&quot;</span>, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="st">&quot;Selection Probability (%)&quot;</span>, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> <span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;left&quot;</span>, <span class="at">columns =</span> <span class="st">&quot;Dose Level&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tab_style</span>(</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">&quot;lightblue&quot;</span>),</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>        <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>          <span class="at">rows =</span> <span class="st">`</span><span class="at">Selection Probability (%)</span><span class="st">`</span> <span class="sc">==</span> <span class="fu">max</span>(<span class="st">`</span><span class="at">Selection Probability (%)</span><span class="st">`</span>)</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fallback to basic table</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(oc_data)</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="mock-data-for-demonstration" class="section level2">
+<h2>Mock Data for Demonstration</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create mock result for demonstration</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>boinet_result <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">toxprob =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="fl">0.02</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="fl">0.08</span>, <span class="st">&quot;3&quot;</span> <span class="ot">=</span> <span class="fl">0.15</span>, <span class="st">&quot;4&quot;</span> <span class="ot">=</span> <span class="fl">0.25</span>, <span class="st">&quot;5&quot;</span> <span class="ot">=</span> <span class="fl">0.40</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">effprob =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="fl">0.10</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="fl">0.20</span>, <span class="st">&quot;3&quot;</span> <span class="ot">=</span> <span class="fl">0.35</span>, <span class="st">&quot;4&quot;</span> <span class="ot">=</span> <span class="fl">0.50</span>, <span class="st">&quot;5&quot;</span> <span class="ot">=</span> <span class="fl">0.65</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">n.patient =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="fl">8.2</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="fl">12.5</span>, <span class="st">&quot;3&quot;</span> <span class="ot">=</span> <span class="fl">15.8</span>, <span class="st">&quot;4&quot;</span> <span class="ot">=</span> <span class="fl">10.3</span>, <span class="st">&quot;5&quot;</span> <span class="ot">=</span> <span class="fl">7.2</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop.select =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="fl">5.2</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="fl">18.7</span>, <span class="st">&quot;3&quot;</span> <span class="ot">=</span> <span class="fl">42.1</span>, <span class="st">&quot;4&quot;</span> <span class="ot">=</span> <span class="fl">28.3</span>, <span class="st">&quot;5&quot;</span> <span class="ot">=</span> <span class="fl">5.7</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> <span class="fl">0.30</span>, <span class="at">delta =</span> <span class="fl">0.60</span>, <span class="at">lambda1 =</span> <span class="fl">0.03</span>, <span class="at">lambda2 =</span> <span class="fl">0.42</span>, <span class="at">eta1 =</span> <span class="fl">0.36</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau.T =</span> <span class="dv">28</span>, <span class="at">tau.E =</span> <span class="dv">42</span>, <span class="at">accrual =</span> <span class="dv">7</span>, <span class="at">duration =</span> <span class="fl">156.3</span>, <span class="at">prop.stop =</span> <span class="fl">3.2</span>, <span class="at">n.sim =</span> <span class="dv">1000</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(boinet_result) <span class="ot">&lt;-</span> <span class="st">&quot;tite.boinet&quot;</span></span></code></pre></div>
+</div>
+<div id="complete-quarto-document-template" class="section level2">
+<h2>Complete Quarto Document Template</h2>
+<p>Here’s a complete Quarto document template for BOIN-ET analysis that
+you can save as a separate <code>.qmd</code> file:</p>
+<div id="basic-template-structure" class="section level3">
+<h3>Basic Template Structure</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;BOIN-ET Clinical Trial Design Analysis&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">subtitle</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Protocol ABC-2024-001: Novel Kinase Inhibitor&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Biostatistics Team&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2025-06-05&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc-depth</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">code-fold</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fig-width</span><span class="kw">:</span><span class="at"> </span><span class="dv">8</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fig-height</span><span class="kw">:</span><span class="at"> </span><span class="dv">6</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">number-sections</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fig-width</span><span class="kw">:</span><span class="at"> </span><span class="dv">7</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fig-height</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">docx</span><span class="kw">:</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fig-width</span><span class="kw">:</span><span class="at"> </span><span class="fl">6.5</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fig-height</span><span class="kw">:</span><span class="at"> </span><span class="fl">4.5</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">execute</span><span class="kw">:</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">echo</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">warning</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">message</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+</div>
+<div id="example-report-sections" class="section level3">
+<h3>Example Report Sections</h3>
+<p>The following demonstrates what would go in your actual Quarto
+report:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Design specifications table</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">create_design_table</span>(boinet_result)</span></code></pre></div>
+<div id="eoeqgkpqtb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#eoeqgkpqtb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#eoeqgkpqtb thead, #eoeqgkpqtb tbody, #eoeqgkpqtb tfoot, #eoeqgkpqtb tr, #eoeqgkpqtb td, #eoeqgkpqtb th {
+  border-style: none;
+}
+
+#eoeqgkpqtb p {
+  margin: 0;
+  padding: 0;
+}
+
+#eoeqgkpqtb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#eoeqgkpqtb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#eoeqgkpqtb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#eoeqgkpqtb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#eoeqgkpqtb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#eoeqgkpqtb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#eoeqgkpqtb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#eoeqgkpqtb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#eoeqgkpqtb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#eoeqgkpqtb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#eoeqgkpqtb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#eoeqgkpqtb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#eoeqgkpqtb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#eoeqgkpqtb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#eoeqgkpqtb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eoeqgkpqtb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#eoeqgkpqtb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#eoeqgkpqtb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#eoeqgkpqtb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eoeqgkpqtb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#eoeqgkpqtb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eoeqgkpqtb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#eoeqgkpqtb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eoeqgkpqtb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#eoeqgkpqtb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eoeqgkpqtb .gt_left {
+  text-align: left;
+}
+
+#eoeqgkpqtb .gt_center {
+  text-align: center;
+}
+
+#eoeqgkpqtb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#eoeqgkpqtb .gt_font_normal {
+  font-weight: normal;
+}
+
+#eoeqgkpqtb .gt_font_bold {
+  font-weight: bold;
+}
+
+#eoeqgkpqtb .gt_font_italic {
+  font-style: italic;
+}
+
+#eoeqgkpqtb .gt_super {
+  font-size: 65%;
+}
+
+#eoeqgkpqtb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#eoeqgkpqtb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#eoeqgkpqtb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#eoeqgkpqtb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#eoeqgkpqtb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#eoeqgkpqtb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#eoeqgkpqtb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#eoeqgkpqtb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#eoeqgkpqtb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_title gt_font_normal" style>TITE-BOIN-ET Design Parameters</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Based on 1000 simulated trials</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Parameter">Parameter</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Value">Value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Parameter" class="gt_row gt_left">Target Toxicity Rate (φ)</td>
+<td headers="Value" class="gt_row gt_center">0.300</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Target Efficacy Rate (δ)</td>
+<td headers="Value" class="gt_row gt_center">0.600</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Lower Toxicity Boundary (λ₁)</td>
+<td headers="Value" class="gt_row gt_center">0.030</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Upper Toxicity Boundary (λ₂)</td>
+<td headers="Value" class="gt_row gt_center">0.420</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Efficacy Boundary (η₁)</td>
+<td headers="Value" class="gt_row gt_center">0.360</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Early Stop Rate (%)</td>
+<td headers="Value" class="gt_row gt_center">3.200</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Average Duration (days)</td>
+<td headers="Value" class="gt_row gt_center">156.300</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Toxicity Assessment Window (days)</td>
+<td headers="Value" class="gt_row gt_center">28.000</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Efficacy Assessment Window (days)</td>
+<td headers="Value" class="gt_row gt_center">42.000</td></tr>
+    <tr><td headers="Parameter" class="gt_row gt_left">Accrual Rate (days)</td>
+<td headers="Value" class="gt_row gt_center">7.000</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Operating characteristics table</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">create_oc_table</span>(boinet_result)</span></code></pre></div>
+<div id="jfqmekdxwm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jfqmekdxwm table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jfqmekdxwm thead, #jfqmekdxwm tbody, #jfqmekdxwm tfoot, #jfqmekdxwm tr, #jfqmekdxwm td, #jfqmekdxwm th {
+  border-style: none;
+}
+
+#jfqmekdxwm p {
+  margin: 0;
+  padding: 0;
+}
+
+#jfqmekdxwm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jfqmekdxwm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jfqmekdxwm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jfqmekdxwm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jfqmekdxwm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jfqmekdxwm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jfqmekdxwm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jfqmekdxwm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jfqmekdxwm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jfqmekdxwm .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jfqmekdxwm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jfqmekdxwm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jfqmekdxwm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jfqmekdxwm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jfqmekdxwm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfqmekdxwm .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jfqmekdxwm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jfqmekdxwm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jfqmekdxwm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfqmekdxwm .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jfqmekdxwm .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfqmekdxwm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jfqmekdxwm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfqmekdxwm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jfqmekdxwm .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfqmekdxwm .gt_left {
+  text-align: left;
+}
+
+#jfqmekdxwm .gt_center {
+  text-align: center;
+}
+
+#jfqmekdxwm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jfqmekdxwm .gt_font_normal {
+  font-weight: normal;
+}
+
+#jfqmekdxwm .gt_font_bold {
+  font-weight: bold;
+}
+
+#jfqmekdxwm .gt_font_italic {
+  font-style: italic;
+}
+
+#jfqmekdxwm .gt_super {
+  font-size: 65%;
+}
+
+#jfqmekdxwm .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jfqmekdxwm .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jfqmekdxwm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jfqmekdxwm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jfqmekdxwm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jfqmekdxwm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jfqmekdxwm .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#jfqmekdxwm .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#jfqmekdxwm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_title gt_font_normal" style>Operating Characteristics</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>TITE-BOIN-ET Design Simulation Results</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Dose-Level">Dose Level</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="True-Toxicity-Probability">True Toxicity Probability</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="True-Efficacy-Probability">True Efficacy Probability</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Average-N-Treated">Average N Treated</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Selection-Probability-(%)">Selection Probability (%)</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Dose Level" class="gt_row gt_left">1</td>
+<td headers="True Toxicity Probability" class="gt_row gt_center">0.020</td>
+<td headers="True Efficacy Probability" class="gt_row gt_center">0.100</td>
+<td headers="Average N Treated" class="gt_row gt_center">8.2</td>
+<td headers="Selection Probability (%)" class="gt_row gt_center">5.2</td></tr>
+    <tr><td headers="Dose Level" class="gt_row gt_left">2</td>
+<td headers="True Toxicity Probability" class="gt_row gt_center">0.080</td>
+<td headers="True Efficacy Probability" class="gt_row gt_center">0.200</td>
+<td headers="Average N Treated" class="gt_row gt_center">12.5</td>
+<td headers="Selection Probability (%)" class="gt_row gt_center">18.7</td></tr>
+    <tr><td headers="Dose Level" class="gt_row gt_left" style="background-color: #ADD8E6;">3</td>
+<td headers="True Toxicity Probability" class="gt_row gt_center" style="background-color: #ADD8E6;">0.150</td>
+<td headers="True Efficacy Probability" class="gt_row gt_center" style="background-color: #ADD8E6;">0.350</td>
+<td headers="Average N Treated" class="gt_row gt_center" style="background-color: #ADD8E6;">15.8</td>
+<td headers="Selection Probability (%)" class="gt_row gt_center" style="background-color: #ADD8E6;">42.1</td></tr>
+    <tr><td headers="Dose Level" class="gt_row gt_left">4</td>
+<td headers="True Toxicity Probability" class="gt_row gt_center">0.250</td>
+<td headers="True Efficacy Probability" class="gt_row gt_center">0.500</td>
+<td headers="Average N Treated" class="gt_row gt_center">10.3</td>
+<td headers="Selection Probability (%)" class="gt_row gt_center">28.3</td></tr>
+    <tr><td headers="Dose Level" class="gt_row gt_left">5</td>
+<td headers="True Toxicity Probability" class="gt_row gt_center">0.400</td>
+<td headers="True Efficacy Probability" class="gt_row gt_center">0.650</td>
+<td headers="Average N Treated" class="gt_row gt_center">7.2</td>
+<td headers="Selection Probability (%)" class="gt_row gt_center">5.7</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract key statistics for inline reporting</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>dose_levels <span class="ot">&lt;-</span> <span class="fu">names</span>(boinet_result<span class="sc">$</span>n.patient)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>selection_probs <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>prop.select)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>best_dose_idx <span class="ot">&lt;-</span> <span class="fu">which.max</span>(selection_probs)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>best_dose <span class="ot">&lt;-</span> dose_levels[best_dose_idx]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>max_selection <span class="ot">&lt;-</span> <span class="fu">max</span>(selection_probs)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>avg_duration <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>duration)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>early_stop <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>prop.stop)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Key findings:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Key findings:</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;- Optimal dose level:&quot;</span>, best_dose, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Optimal dose level: 3</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;- Selection probability:&quot;</span>, <span class="fu">round</span>(max_selection, <span class="dv">1</span>), <span class="st">&quot;%</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Selection probability: 42.1 %</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;- Average trial duration:&quot;</span>, <span class="fu">round</span>(avg_duration, <span class="dv">0</span>), <span class="st">&quot;days</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Average trial duration: 156 days</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;- Early stopping rate:&quot;</span>, <span class="fu">round</span>(early_stop, <span class="dv">1</span>), <span class="st">&quot;%</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Early stopping rate: 3.2 %</span></span></code></pre></div>
+</div>
+</div>
+<div id="dose-selection-visualization" class="section level2">
+<h2>Dose Selection Visualization</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (ggplot2_available) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create data frame for plotting</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  plot_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">dose_level =</span> <span class="fu">names</span>(boinet_result<span class="sc">$</span>n.patient),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">selection_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>prop.select)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  plot_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dose_level, <span class="at">y =</span> selection_prob)) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(selection_prob, <span class="dv">1</span>), <span class="st">&quot;%&quot;</span>)), </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">&quot;Dose Level&quot;</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Selection Probability (%)&quot;</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">&quot;TITE-BOIN-ET Dose Selection Performance&quot;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;ggplot2 package not available for visualization.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="figure">
+<img src="data:image/png;base64,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" alt />
+<p class="caption">Dose selection probabilities</p>
+</div>
+</div>
+<div id="risk-benefit-analysis" class="section level2">
+<h2>Risk-Benefit Analysis</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (ggplot2_available) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create risk-benefit plot data</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  rb_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">dose_level =</span> <span class="fu">names</span>(boinet_result<span class="sc">$</span>n.patient),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">toxicity_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>toxprob),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">efficacy_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>effprob),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">selection_prob =</span> <span class="fu">as.numeric</span>(boinet_result<span class="sc">$</span>prop.select)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  rb_data <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> toxicity_prob, <span class="at">y =</span> efficacy_prob)) <span class="sc">+</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> selection_prob), <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> dose_level), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Selection</span><span class="sc">\n</span><span class="st">Probability (%)&quot;</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">&quot;True Toxicity Probability&quot;</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;True Efficacy Probability&quot;</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">&quot;Risk-Benefit Profile&quot;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;ggplot2 package not available for risk-benefit visualization.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="figure">
+<img src="data:image/png;base64,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" alt />
+<p class="caption">Efficacy-toxicity profile</p>
+</div>
+</div>
+<div id="parameterized-reports" class="section level2">
+<h2>Parameterized Reports</h2>
+<p>Quarto supports parameterized reports where you can pass values to
+customize the analysis.</p>
+<div id="setting-up-parameters" class="section level3">
+<h3>Setting Up Parameters</h3>
+<p><strong>Step 1:</strong> Add parameters to your YAML header:</p>
+<pre><code>---
+title: &quot;BOIN-ET Analysis Report&quot;
+params:
+  target_tox: 0.30
+  target_eff: 0.60
+  protocol_id: &quot;ABC-001&quot;
+  compound_name: &quot;XYZ-123&quot;
+---</code></pre>
+<p><strong>Step 2:</strong> Use parameters in your analysis code (in a
+real parameterized document):</p>
+<pre><code># Access parameters like this:
+# target_toxicity &lt;- params$target_tox
+# protocol_name &lt;- params$protocol_id</code></pre>
+<p><strong>Step 3:</strong> Render with custom parameters:</p>
+<pre><code># quarto::quarto_render(
+#   &quot;your_template.qmd&quot;,
+#   execute_params = list(
+#     target_tox = 0.25,
+#     target_eff = 0.65,
+#     protocol_id = &quot;XYZ-002&quot;,
+#     compound_name = &quot;New Drug&quot;
+#   )
+# )</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstration of the concept using mock parameters</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mock_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_tox =</span> <span class="fl">0.30</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_eff =</span> <span class="fl">0.60</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">protocol_id =</span> <span class="st">&quot;ABC-001&quot;</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">compound_name =</span> <span class="st">&quot;XYZ-123&quot;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Parameterized report demonstration:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameterized report demonstration:</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Protocol:&quot;</span>, mock_params<span class="sc">$</span>protocol_id, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Protocol: ABC-001</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Compound:&quot;</span>, mock_params<span class="sc">$</span>compound_name, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Compound: XYZ-123</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Target toxicity:&quot;</span>, mock_params<span class="sc">$</span>target_tox, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Target toxicity: 0.3</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Target efficacy:&quot;</span>, mock_params<span class="sc">$</span>target_eff, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Target efficacy: 0.6</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co"># This shows how you could customize analysis based on parameters</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Customized analysis settings:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Customized analysis settings:</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (mock_params<span class="sc">$</span>target_tox <span class="sc">&lt;</span> <span class="fl">0.25</span>) {</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;- Conservative toxicity approach</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (mock_params<span class="sc">$</span>target_tox <span class="sc">&gt;</span> <span class="fl">0.35</span>) {</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;- Aggressive toxicity approach</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;- Standard toxicity approach</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Standard toxicity approach</span></span></code></pre></div>
+</div>
+</div>
+<div id="batch-report-generation" class="section level2">
+<h2>Batch Report Generation</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate the concept with executable code</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conservative =</span> <span class="fu">list</span>(<span class="at">phi =</span> <span class="fl">0.25</span>, <span class="at">delta =</span> <span class="fl">0.50</span>, <span class="at">name =</span> <span class="st">&quot;Conservative&quot;</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">standard =</span> <span class="fu">list</span>(<span class="at">phi =</span> <span class="fl">0.30</span>, <span class="at">delta =</span> <span class="fl">0.60</span>, <span class="at">name =</span> <span class="st">&quot;Standard&quot;</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">aggressive =</span> <span class="fu">list</span>(<span class="at">phi =</span> <span class="fl">0.35</span>, <span class="at">delta =</span> <span class="fl">0.70</span>, <span class="at">name =</span> <span class="st">&quot;Aggressive&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create scenario-specific summaries</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>create_scenario_summary <span class="ot">&lt;-</span> <span class="cf">function</span>(scenario) {</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Scenario: %s (φ=%.2f, δ=%.2f)&quot;</span>,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    scenario<span class="sc">$</span>name, scenario<span class="sc">$</span>phi, scenario<span class="sc">$</span>delta</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate summaries for all scenarios</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>scenario_summaries <span class="ot">&lt;-</span> <span class="fu">lapply</span>(scenarios, create_scenario_summary)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Available scenarios:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Available scenarios:</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(summary <span class="cf">in</span> scenario_summaries) {</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;-&quot;</span>, summary, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Scenario: Conservative (φ=0.25, δ=0.50) </span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Scenario: Standard (φ=0.30, δ=0.60) </span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Scenario: Aggressive (φ=0.35, δ=0.70)</span></span></code></pre></div>
+<p>For batch processing, you would typically:</p>
+<ol style="list-style-type: decimal">
+<li>Create a parameterized template</li>
+<li>Define scenarios with different parameters</li>
+<li>Use <code>quarto::quarto_render()</code> with different
+<code>execute_params</code> for each scenario</li>
+</ol>
+</div>
+<div id="conditional-content" class="section level2">
+<h2>Conditional Content</h2>
+<p>Show different content based on results:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract results for conditional logic</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>oc_data <span class="ot">&lt;-</span> <span class="fu">extract_oc_data</span>(boinet_result)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>max_selection_prob <span class="ot">&lt;-</span> <span class="fu">max</span>(oc_data<span class="sc">$</span>selection_prob)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>optimal_dose <span class="ot">&lt;-</span> oc_data<span class="sc">$</span>dose_level[<span class="fu">which.max</span>(oc_data<span class="sc">$</span>selection_prob)]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Conditional content based on results</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (max_selection_prob <span class="sc">&gt;</span> <span class="dv">40</span>) {</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  recommendation <span class="ot">&lt;-</span> <span class="st">&quot;Strong evidence for optimal dose identification&quot;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  confidence_level <span class="ot">&lt;-</span> <span class="st">&quot;High&quot;</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (max_selection_prob <span class="sc">&gt;</span> <span class="dv">25</span>) {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  recommendation <span class="ot">&lt;-</span> <span class="st">&quot;Moderate evidence for dose selection&quot;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  confidence_level <span class="ot">&lt;-</span> <span class="st">&quot;Moderate&quot;</span>  </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  recommendation <span class="ot">&lt;-</span> <span class="st">&quot;Weak evidence - consider design modifications&quot;</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  confidence_level <span class="ot">&lt;-</span> <span class="st">&quot;Low&quot;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Recommendation Confidence:&quot;</span>, confidence_level, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recommendation Confidence: High</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Analysis Conclusion:&quot;</span>, recommendation, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Analysis Conclusion: Strong evidence for optimal dose identification</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;The optimal dose level %s was selected in %.1f%% of simulations.</span><span class="sc">\n</span><span class="st">&quot;</span>, </span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>            optimal_dose, max_selection_prob))</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The optimal dose level 3 was selected in 42.1% of simulations.</span></span></code></pre></div>
+</div>
+<div id="best-practices-for-quarto-reports" class="section level2">
+<h2>Best Practices for Quarto Reports</h2>
+<div id="document-structure" class="section level3">
+<h3>1. Document Structure</h3>
+<p>Use meaningful YAML headers with appropriate output formats for your
+audience.</p>
+</div>
+<div id="chunk-management" class="section level3">
+<h3>2. Chunk Management</h3>
+<ul>
+<li>Use descriptive chunk labels</li>
+<li>Set <code>cache: true</code> for expensive computations</li>
+<li>Use <code>echo: false</code> to hide code in final reports</li>
+<li>Use <code>eval: false</code> for demonstration code</li>
+</ul>
+</div>
+<div id="reproducible-workflows" class="section level3">
+<h3>3. Reproducible Workflows</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include session information</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;R version:&quot;</span>, R.version.string, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; R version: R version 4.3.3 (2024-02-29 ucrt)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;boinet version:&quot;</span>, <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(<span class="st">&quot;boinet&quot;</span>)), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; boinet version: 1.2.0</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (gt_available) {</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;gt version:&quot;</span>, <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(<span class="st">&quot;gt&quot;</span>)), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; gt version: 1.0.0</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (ggplot2_available) {</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;ggplot2 version:&quot;</span>, <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(<span class="st">&quot;ggplot2&quot;</span>)), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ggplot2 version: 3.5.1</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Document analysis timestamp</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Analysis completed:&quot;</span>, <span class="fu">format</span>(<span class="fu">Sys.time</span>(), <span class="st">&quot;%Y-%m-%d %H:%M:%S&quot;</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Analysis completed: 2025-06-05 16:01:14</span></span></code></pre></div>
+</div>
+<div id="output-formatting" class="section level3">
+<h3>4. Output Formatting</h3>
+<p>Consider your target audience and output format when designing tables
+and figures.</p>
+</div>
+</div>
+<div id="template-library" class="section level2">
+<h2>Template Library</h2>
+<div id="clinical-protocol-report-template" class="section level3">
+<h3>Clinical Protocol Report Template</h3>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create standardized clinical report content</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>create_clinical_report_content <span class="ot">&lt;-</span> <span class="cf">function</span>(boinet_result, protocol_info) {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract key information</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  oc_data <span class="ot">&lt;-</span> <span class="fu">extract_oc_data</span>(boinet_result)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  stats <span class="ot">&lt;-</span> <span class="fu">create_summary_stats</span>(boinet_result)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create content structure</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  content <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">sprintf</span>(<span class="st">&quot;Protocol %s: %s Analysis&quot;</span>, </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                   protocol_info<span class="sc">$</span>id, protocol_info<span class="sc">$</span>compound),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary =</span> <span class="fu">create_text_summary</span>(boinet_result),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">key_findings =</span> <span class="fu">list</span>(</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">optimal_dose =</span> stats<span class="sc">$</span>optimal_dose,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">selection_prob =</span> <span class="fu">round</span>(stats<span class="sc">$</span>max_selection_prob, <span class="dv">1</span>),</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">duration =</span> <span class="fu">round</span>(stats<span class="sc">$</span>avg_duration, <span class="dv">0</span>),</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">early_stop =</span> <span class="fu">round</span>(stats<span class="sc">$</span>early_stop_rate, <span class="dv">1</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">oc_data =</span> oc_data</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(content)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>protocol_info <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">id =</span> <span class="st">&quot;XYZ-2024-001&quot;</span>, <span class="at">compound =</span> <span class="st">&quot;Novel Kinase Inhibitor&quot;</span>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>demo_result <span class="ot">&lt;-</span> boinet_result</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>report_content <span class="ot">&lt;-</span> <span class="fu">create_clinical_report_content</span>(demo_result, protocol_info)</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Report title:&quot;</span>, report_content<span class="sc">$</span>title, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Report title: Protocol XYZ-2024-001: Novel Kinase Inhibitor Analysis</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Summary:&quot;</span>, report_content<span class="sc">$</span>summary, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Summary: The TITE-BOINET design selected dose level 3 in 42.1% of trials, with an average trial duration of 156 days and early stopping rate of 3.2%.</span></span></code></pre></div>
+</div>
+<div id="regulatory-submission-template" class="section level3">
+<h3>Regulatory Submission Template</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create regulatory-style formatting</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>create_regulatory_content <span class="ot">&lt;-</span> <span class="cf">function</span>(boinet_result, submission_info) {</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  stats <span class="ot">&lt;-</span> <span class="fu">create_summary_stats</span>(boinet_result)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Regulatory-style summary</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  reg_summary <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Study %s evaluated %d dose levels using a %s design. The recommended Phase II dose is %s, selected in %s%% of %d simulated trials.&quot;</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    submission_info<span class="sc">$</span>study_id,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">length</span>(<span class="fu">names</span>(boinet_result<span class="sc">$</span>n.patient)),</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">toupper</span>(<span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>, <span class="st">&quot;-&quot;</span>, stats<span class="sc">$</span>design_type)),</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    stats<span class="sc">$</span>optimal_dose,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format</span>(stats<span class="sc">$</span>max_selection_prob, <span class="at">digits =</span> <span class="dv">3</span>),</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    boinet_result<span class="sc">$</span>n.sim</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary =</span> reg_summary,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">table_title =</span> <span class="fu">sprintf</span>(<span class="st">&quot;Table %s: Operating Characteristics&quot;</span>, submission_info<span class="sc">$</span>table_number),</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">stats =</span> stats</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>submission_info <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">study_id =</span> <span class="st">&quot;ABC-123-001&quot;</span>, <span class="at">table_number =</span> <span class="st">&quot;14.2.1&quot;</span>)</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>demo_result <span class="ot">&lt;-</span> boinet_result</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>reg_content <span class="ot">&lt;-</span> <span class="fu">create_regulatory_content</span>(demo_result, submission_info)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Regulatory summary:&quot;</span>, reg_content<span class="sc">$</span>summary, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Regulatory summary: Study ABC-123-001 evaluated 5 dose levels using a TITE-BOINET design. The recommended Phase II dose is 3, selected in 42.1% of 1000 simulated trials.</span></span></code></pre></div>
+</div>
+</div>
+<div id="troubleshooting-common-issues" class="section level2">
+<h2>Troubleshooting Common Issues</h2>
+<div id="package-availability-issues" class="section level3">
+<h3>Package Availability Issues</h3>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check required packages</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>required_packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;boinet&quot;</span>, <span class="st">&quot;dplyr&quot;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>optional_packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;gt&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;knitr&quot;</span>, <span class="st">&quot;rmarkdown&quot;</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>check_package_status <span class="ot">&lt;-</span> <span class="cf">function</span>(packages, <span class="at">required =</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  status <span class="ot">&lt;-</span> <span class="fu">sapply</span>(packages, <span class="cf">function</span>(pkg) {</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">requireNamespace</span>(pkg, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  missing <span class="ot">&lt;-</span> <span class="fu">names</span>(status)[<span class="sc">!</span>status]</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(missing) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">ifelse</span>(required, <span class="st">&quot;Missing required&quot;</span>, <span class="st">&quot;Missing optional&quot;</span>), <span class="st">&quot;packages:&quot;</span>, </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">paste</span>(missing, <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Install with: install.packages(c(&#39;&quot;</span>, <span class="fu">paste</span>(missing, <span class="at">collapse =</span> <span class="st">&quot;&#39;, &#39;&quot;</span>), <span class="st">&quot;&#39;))</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;All&quot;</span>, <span class="fu">ifelse</span>(required, <span class="st">&quot;required&quot;</span>, <span class="st">&quot;optional&quot;</span>), <span class="st">&quot;packages available</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="fu">check_package_status</span>(required_packages, <span class="cn">TRUE</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; All required packages available</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="fu">check_package_status</span>(optional_packages, <span class="cn">FALSE</span>)</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; All optional packages available</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Check Quarto availability</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (quarto_available) {</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;✓ Quarto CLI available</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;⚠ Quarto CLI not found. Install from: https://quarto.org</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✓ Quarto CLI available</span></span></code></pre></div>
+</div>
+<div id="memory-and-performance-issues" class="section level3">
+<h3>Memory and Performance Issues</h3>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tips for handling large simulations</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>check_result_size <span class="ot">&lt;-</span> <span class="cf">function</span>(result) {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  size_mb <span class="ot">&lt;-</span> <span class="fu">object.size</span>(result) <span class="sc">/</span> (<span class="dv">1024</span><span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Result object size: %.1f MB</span><span class="sc">\n</span><span class="st">&quot;</span>, size_mb))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (size_mb <span class="sc">&gt;</span> <span class="dv">50</span>) {</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;⚠ Large result object detected. Consider:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;  - Using cache: true in chunks</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;  - Reducing n.sim for development</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;  - Extracting only needed data</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;✓ Result size is manageable</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the demo result we created earlier</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>demo_result <span class="ot">&lt;-</span> boinet_result</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="fu">check_result_size</span>(demo_result)</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Result object size: 0.0 MB</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✓ Result size is manageable</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Memory-efficient data extraction</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>extract_minimal_data <span class="ot">&lt;-</span> <span class="cf">function</span>(result) {</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">oc_summary =</span> <span class="fu">data.frame</span>(</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">dose =</span> <span class="fu">names</span>(result<span class="sc">$</span>n.patient),</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">selection_prob =</span> <span class="fu">as.numeric</span>(result<span class="sc">$</span>prop.select),</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">key_stats =</span> <span class="fu">list</span>(</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">optimal_dose =</span> <span class="fu">names</span>(result<span class="sc">$</span>prop.select)[<span class="fu">which.max</span>(result<span class="sc">$</span>prop.select)],</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">duration =</span> result<span class="sc">$</span>duration,</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">early_stop =</span> result<span class="sc">$</span>prop.stop</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>minimal_data <span class="ot">&lt;-</span> <span class="fu">extract_minimal_data</span>(demo_result)</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Minimal data extracted successfully</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Minimal data extracted successfully</span></span></code></pre></div>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The boinet package provides comprehensive support for Quarto-based
+reporting workflows, enabling:</p>
+<ul>
+<li><strong>Reproducible analysis</strong> with parameterized
+reports</li>
+<li><strong>Professional formatting</strong> suitable for various
+audiences</li>
+<li><strong>Flexible output</strong> in multiple formats (HTML, PDF,
+Word)</li>
+<li><strong>Interactive elements</strong> for enhanced user
+experience</li>
+<li><strong>Standardized templates</strong> for consistent
+reporting</li>
+</ul>
+<p>This workflow ensures that BOIN-ET analysis results can be
+effectively communicated to clinical teams, regulatory agencies, and
+academic audiences while maintaining full reproducibility and
+professional presentation standards.</p>
+<p>For basic result formatting, see the <code>result-formatting</code>
+vignette. For publication-ready tables, see the
+<code>gt-integration</code> vignette.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

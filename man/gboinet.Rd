@@ -2,245 +2,418 @@
 % Please edit documentation in R/gboinet.R
 \name{gboinet}
 \alias{gboinet}
-\title{Conducting simulation study of gBOIN-ET design}
+\title{gBOIN-ET: Generalized Bayesian Optimal Interval Design for Ordinal Graded Outcomes}
 \usage{
 gboinet(
   n.dose, start.dose, size.cohort, n.cohort,
   toxprob, effprob, sev.weight, res.weight,
-  phi, phi1=phi*0.1, phi2=phi*1.4, delta, delta1=delta*0.6,
-  alpha.T1=0.5, alpha.E1=0.5, tau.T, tau.E,
-  te.corr=0.2, gen.event.time="weibull",
-  accrual, gen.enroll.time="uniform",
-  stopping.npts=size.cohort*n.cohort,
-  stopping.prob.T=0.95, stopping.prob.E=0.99,
-  estpt.method, obd.method,
-  w1=0.33, w2=1.09,
-  plow.ast=phi1, pupp.ast=phi2, qlow.ast=delta1/2, qupp.ast=delta,
-  psi00=40, psi11=60,
-  n.sim=1000, seed.sim=100)
+  phi, phi1 = phi*0.1, phi2 = phi*1.4,
+  delta, delta1 = delta*0.6,
+  alpha.T1 = 0.5, alpha.E1 = 0.5, tau.T, tau.E,
+  te.corr = 0.2, gen.event.time = "weibull",
+  accrual, gen.enroll.time = "uniform",
+  stopping.npts = size.cohort*n.cohort,
+  stopping.prob.T = 0.95, stopping.prob.E = 0.99,
+  estpt.method = "obs.prob", obd.method = "max.effprob",
+  w1 = 0.33, w2 = 1.09,
+  plow.ast = phi1, pupp.ast = phi2,
+  qlow.ast = delta1/2, qupp.ast = delta,
+  psi00 = 40, psi11 = 60,
+  n.sim = 1000, seed.sim = 100)
 }
 \arguments{
-\item{n.dose}{Number of dose.}
+\item{n.dose}{Integer specifying the number of dose levels to investigate.}
 
-\item{start.dose}{Starting dose. The lowest dose is generally recommended.}
+\item{start.dose}{Integer specifying the starting dose level (1 = lowest dose).
+Generally recommended to start at the lowest dose for safety.}
 
-\item{size.cohort}{Cohort size.}
+\item{size.cohort}{Integer specifying the number of patients per cohort.
+Commonly 3 or 6 patients, with 3 being standard for early-phase trials.}
 
-\item{n.cohort}{Number of cohort.}
+\item{n.cohort}{Integer specifying the maximum number of cohorts.
+Total sample size = size.cohort*n.cohort.}
 
-\item{toxprob}{Vector of true toxicity probability.}
+\item{toxprob}{Matrix (nrow = toxicity categories, ncol = n.dose) specifying
+true toxicity probabilities. Each column must sum to 1.0. Rows represent
+ordered toxicity levels from none to most severe.}
 
-\item{effprob}{Vector of true efficacy probability.}
+\item{effprob}{Matrix (nrow = efficacy categories, ncol = n.dose) specifying
+true efficacy probabilities. Each column must sum to 1.0. Rows represent
+ordered response levels from none to best response.}
 
-\item{sev.weight}{Vector of weight for toxicity category.}
+\item{sev.weight}{Numeric vector of toxicity severity weights. Length must
+equal nrow(toxprob). Should be non-decreasing and reflect clinical impact.
+First element typically 0 (no toxicity).}
 
-\item{res.weight}{Vector of weight for efficacy category.}
+\item{res.weight}{Numeric vector of efficacy response weights. Length must
+equal nrow(effprob). Should be non-decreasing and reflect clinical benefit.
+First element typically 0 (no response).}
 
-\item{phi}{Target toxicity probability.}
+\item{phi}{Numeric target for normalized equivalent toxicity score (nETS).
+Should be calibrated for weighted scores, not binary probabilities.}
 
-\item{phi1}{Highest toxicity probability that is deemed sub-therapeutic such
-that dose-escalation should be pursued. The default value is
-\code{phi1=phi*0.1}.}
+\item{phi1}{Numeric lower boundary for nETS. Doses with nETS <= phi1 considered
+under-dosed for toxicity. Default phi*0.1.}
 
-\item{phi2}{Lowest toxicity probability that is deemed overly toxic such that
-dose de-escalation is needed. The default value is \code{phi2=phi*1.4}.}
+\item{phi2}{Numeric upper boundary for nETS. Doses with nETS >= phi2 trigger
+de-escalation. Default phi*1.4.}
 
-\item{delta}{Target efficacy probability.}
+\item{delta}{Numeric target for normalized equivalent efficacy score (nEES).
+Should reflect desired level of clinical benefit.}
 
-\item{delta1}{Minimum probability deemed efficacious such that the dose
-levels with less than delta1 are considered sub-therapeutic.
-The default value is \code{delta1=delta*0.6}.}
+\item{delta1}{Numeric minimum threshold for nEES. Doses below this considered
+sub-therapeutic. Default delta*0.6.}
 
-\item{alpha.T1}{Probability that toxicity event occurs in the late half of
-toxicity assessment window. The default value is \code{alpha.T1=0.5}.}
+\item{alpha.T1}{Numeric value specifying the probability that a toxicity outcome occurs
+in the late half of the toxicity assessment window. Used for event time generation.
+Default is 0.5.}
 
-\item{alpha.E1}{Probability that efficacy event occurs in the late half of
-assessment window. The default value is \code{alpha.E1=0.5}.}
+\item{alpha.E1}{Numeric value specifying the probability that an efficacy outcome
+occurs in the late half of the efficacy assessment window. Used for event
+time generation. Default is 0.5.}
 
-\item{tau.T}{Toxicity assessment windows (days).}
+\item{tau.T}{Numeric value specifying the toxicity assessment window in days.
+All toxicity evaluations must be completed within this period.}
 
-\item{tau.E}{Efficacy assessment windows (days).}
+\item{tau.E}{Numeric value specifying the efficacy assessment window in days.
+All efficacy evaluations must be completed within this period.}
 
-\item{te.corr}{Correlation between toxicity and efficacy probability,
-specified as Gaussian copula parameter. The default value is
-\code{te.corr=0.2}.}
+\item{te.corr}{Numeric value between -1 and 1 specifying the correlation between
+toxicity and efficacy, specified as Gaussian copula parameter. Default is 0.2
+(weak positive correlation).}
 
-\item{gen.event.time}{Method to generate the time to first toxicity and
-efficacy outcome. Weibull distribution is used when
-\code{gen.event.time="weibull"}. Uniform distribution is used when
-\code{gen.event.time="uniform"}. The default value is
-\code{gen.event.time="weibull"}.}
+\item{gen.event.time}{Character string specifying the distribution for generating
+event times. Options are "weibull" (default) or "uniform". A bivariate
+Gaussian copula model is used to jointly generate the time to first ordinal toxicity
+and efficacy outcome, where the marginal distributions are set to Weibull
+distribution when \code{gen.event.time="weibull"}, and uniform distribution when
+\code{gen.event.time="uniform"}.}
 
-\item{accrual}{Accrual rate (days) (average number of days necessary to
-enroll one patient).}
+\item{accrual}{Numeric value specifying the accrual rate (days), which is the
+average number of days between patient enrollments. Lower values indicate
+faster accrual.}
 
-\item{gen.enroll.time}{Method to generate enrollment time. Uniform
-distribution is used when \code{gen.enroll.time="uniform"}. Exponential
-distribution is used when \code{gen.enroll.time="exponential"}. The default
-value is \code{gen.enroll.time="uniform"}.}
+\item{gen.enroll.time}{Character string specifying the distribution for enrollment
+times. Options are "uniform" (default) or "exponential". Uniform distribution
+is used when \code{gen.enroll.time="uniform"}, and exponential distribution
+is used when \code{gen.enroll.time="exponential"}.}
 
-\item{stopping.npts}{Early study termination criteria for the number of
-patients. If the number of patients at the current dose reaches this
-criteria, the study is terminated. The default value is
-\code{stopping.npts=size.cohort*n.cohort}.}
+\item{stopping.npts}{Integer specifying the maximum number of patients per dose
+for early study termination. If the number of patients at the current dose
+reaches this criteria, the study stops the enrollment and is terminated.
+Default is size.cohort*n.cohort.}
 
-\item{stopping.prob.T}{Early study termination criteria for toxicity,
-taking a value between 0 and 1. If the posterior probability that toxicity
-outcome is less than the target toxicity probability (\code{phi}) is larger than
-this criteria, the dose levels are eliminated from the study. The default
-value is \code{stopping.prob.T=0.95}.}
+\item{stopping.prob.T}{Numeric value between 0 and 1 specifying the early study
+termination threshold for toxicity. If P(nETS > phi) > stopping.prob.T,
+the dose levels are eliminated from the investigation. Default is 0.95.}
 
-\item{stopping.prob.E}{Early study termination criteria for efficacy,
-taking a value between 0 and 1. If the posterior probability that efficacy
-outcome is less than the minimum efficacy probability (\code{delta1}) is larger
-than this criteria, the dose levels are eliminated from the study.
-The default value is \code{stopping.prob.E=0.99}.}
+\item{stopping.prob.E}{Numeric value between 0 and 1 specifying the early study
+termination threshold for efficacy. If P(nEES < delta1) > stopping.prob.E,
+the dose levels are eliminated from the investigation. Default is 0.99.}
 
-\item{estpt.method}{Method to estimate the efficacy probability. Fractional
-polynomial logistic regression is used when \code{estpt.method="fp.logistic"}.
-Model averaging of multiple unimodal isotopic regression is used when
-\code{estpt.method="multi.iso"}. Observed efficacy probability is used when
-\code{estpt.method="obs.prob"}.}
+\item{estpt.method}{Character string specifying the method for estimating efficacy
+probabilities. Options: "obs.prob" (observed efficacy probabilitiesrates),
+"fp.logistic" (fractional polynomial), or "multi.iso" (model averaging of
+multiple unimodal isotopic regression). Default is "obs.prob".}
 
-\item{obd.method}{Method to select the optimal biological dose. Utility
-defined by weighted function is used when \code{obd.method="utility.weighted"}.
-Utility defined by truncated linear function is used when
-\code{obd.method="utility.truncated.linear"}. Utility defined by scoring is
-used when \code{obd.method="utility.scoring"}. Highest estimated efficacy
-probability is used when \code{obd.method="max.effprob"}.}
+\item{obd.method}{Character string specifying the method for OBD selection.
+Options: "utility.weighted", "utility.truncated.linear", "utility.scoring",
+or "max.effprob" (default).}
 
-\item{w1}{Weight for toxicity-efficacy trade-off in utility defined by
-weighted function. This must be specified when using
-\code{obd.method="utility.weighted"}. The default value is \code{w1=0.33}.}
+\item{w1}{Numeric value specifying the weight for toxicity-efficacy trade-off
+in "utility.weighted" method. Default is 0.33.}
 
-\item{w2}{Weight for penalty imposed on toxic doses in utility defined by
-weighted function. This must be specified when using
-\code{obd.method="utility.weighted"}. The default value is \code{w2=1.09}.}
+\item{w2}{Numeric value specifying the penalty weight for toxic doses in
+"utility.weighted" method. Default is 1.09.}
 
-\item{plow.ast}{Lower threshold of toxicity linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{plow.ast=phi1}.}
+\item{plow.ast}{Numeric value specifying the lower toxicity threshold for
+"utility.truncated.linear" method. Default is phi1.}
 
-\item{pupp.ast}{Upper threshold of toxicity linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{pupp.ast=phi2}.}
+\item{pupp.ast}{Numeric value specifying the upper toxicity threshold for
+"utility.truncated.linear" method. Default is phi2.}
 
-\item{qlow.ast}{Lower threshold of efficacy linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{qlow.ast=delta1/2}.}
+\item{qlow.ast}{Numeric value specifying the lower efficacy threshold for
+"utility.truncated.linear" method. Default is delta1/2.}
 
-\item{qupp.ast}{Upper threshold of efficacy linear truncated function. This
-must be specified when using \code{obd.method="utility.truncated.linear"}.
-The default value is \code{qupp.ast=delta}.}
+\item{qupp.ast}{Numeric value specifying the upper efficacy threshold for
+"utility.truncated.linear" method. Default is delta.}
 
-\item{psi00}{Score for toxicity=no and efficacy=no in utility defined by
-scoring. This must be specified when using \code{obd.method="utility.scoring"}.
-The default value is \code{psi00=40}.}
+\item{psi00}{Numeric value specifying the utility score for (toxicity=no, efficacy=no)
+in "utility.scoring" method. Default is 40.}
 
-\item{psi11}{Score for toxicity=yes and efficacy=yes in utility defined by
-scoring. This must be specified when using \code{obd.method="utility.scoring"}.
-The default value is \code{psi11=60}.}
+\item{psi11}{Numeric value specifying the utility score for (toxicity=yes, efficacy=yes)
+in "utility.scoring" method. Default is 60.}
 
-\item{n.sim}{Number of simulated trial. The default value is
-\code{n.sim=1000}.}
+\item{n.sim}{Integer specifying the number of simulated trials. Default is 1000.
+Higher values provide more stable operating characteristics.}
 
-\item{seed.sim}{Seed for random number generator. The default value is
-\code{seed.sim=100}.}
+\item{seed.sim}{Integer specifying the random seed for reproducible results.
+Default is 100.}
 }
 \value{
-The \code{gboinet} returns a list containing the following components:
-\item{toxprob}{True toxicity probability.}
-\item{effprob}{True efficacy probability.}
-\item{nETS}{Normalized equivalent toxicity score.}
-\item{nEES}{Normalized equivalent efficacy score.}
-\item{phi}{Target toxicity probability.}
-\item{delta}{Target efficacy probability.}
-\item{lambda1}{Lower toxicity boundary in dose escalation/de-escalation.}
-\item{lambda2}{Upper toxicity boundary in dose escalation/de-escalation.}
-\item{eta1}{Lower efficacy boundary in dose escalation/de-escalation.}
-\item{tau.T}{Toxicity assessment windows (days).}
-\item{tau.E}{Efficacy assessment windows (days).}
-\item{accrual}{Accrual rate (days) (average number of days necessary to
-enroll one patient).}
-\item{estpt.method}{Method to estimate the efficacy probability.}
-\item{obd.method}{Method to select the optimal biological dose.}
-\item{n.patient}{Average number of patients who were treated at each dose
-level}
-\item{prop.select}{Percentage of times that each dose level was selected as
-optimal biological dose.}
-\item{prop.stop}{Percentage of times that the study was terminated and
-optimal biological dose was not selected.}
-\item{duration}{Expected study duration (days)}
+A list object of class "gboinet" containing the following components:
+\item{toxprob}{True toxicity probability matrix used in simulation.}
+\item{effprob}{True efficacy probability matrix used in simulation.}
+\item{nETS}{True normalized equivalent toxicity scores by dose level.}
+\item{nEES}{True normalized equivalent efficacy scores by dose level.}
+\item{phi}{Target normalized equivalent toxicity scores.}
+\item{delta}{Target normalized equivalent efficacy scores.}
+\item{lambda1}{Lower toxicity decision boundary.}
+\item{lambda2}{Upper toxicity decision boundary.}
+\item{eta1}{Lower efficacy decision boundary.}
+\item{tau.T}{Toxicity assessment window (days).}
+\item{tau.E}{Efficacy assessment window (days).}
+\item{accrual}{Accrual rate (days).}
+\item{ncat.T}{Number of ordinal toxicity outcome categories.}
+\item{ncat.E}{Number of ordinal efficacy outcome categories.}
+\item{estpt.method}{Method used for efficacy probability estimation.}
+\item{obd.method}{Method used for optimal biological dose selection.}
+\item{n.patient}{Average number of patients treated at each dose level across simulations.}
+\item{prop.select}{Percentage of simulations selecting each dose level as OBD.}
+\item{prop.stop}{Percentage of simulations terminating early without OBD selection.}
+\item{duration}{Expected trial duration in days.}
 }
 \description{
-Generalized Bayesian optimal interval design for optimal dose-finding
-accounting for ordinal graded efficacy and toxicity (gBOIN-ET design) is
-implemented under a scenario specified. Operating characteristics of the
-design are summarized by the percentage of times that each dose level was
-selected as optimal biological dose and the average number of patients who
-were treated at each dose level.
+Conducts simulation studies of the gBOIN-ET (generalized Bayesian Optimal Interval
+design for optimal dose-finding accounting for ordinal graded Efficacy and Toxicity)
+design. This extension of BOIN-ET utilizes ordinal (graded) outcome information
+rather than binary endpoints, providing more nuanced dose-finding decisions by
+incorporating the full spectrum of toxicity severity and efficacy response levels.
+
+Unlike traditional binary approaches that classify outcomes as simply "toxic/non-toxic"
+or "effective/ineffective," gBOIN-ET recognizes that clinical outcomes exist on a
+continuum. This design is particularly valuable when the degree of toxicity or
+efficacy response significantly impacts clinical decision-making and patient outcomes.
 }
 \details{
-The \code{gboinet} is a function which generates the operating
-characteristics of the generalized Bayesian optimal interval design for
-optimal dose-finding accounting for ordinal graded efficacy and toxicity
-(gBOIN-ET design) by a simulation study. Users can specify a
-variety of study settings to simulate studies, and choose methods to estimate
-the efficacy probability and to select the optimal biological dose. The
-operating characteristics of the design are summarized by the percentage of
-times that each dose level was selected as optimal biological dose and the
-average number of patients who were treated at each dose level. The
-percentage of times that the study was terminated and the expected study
-duration are also provided.
+\strong{Conceptual Foundation:}
+
+\strong{Binary vs Ordinal Paradigm:}
+Traditional designs lose valuable information by dichotomizing outcomes:
+\itemize{
+\item \strong{Binary approach}: Grade 3 or Grade 4 toxicity treated identically as "toxic"
+\item \strong{Ordinal approach}: Preserves clinically meaningful distinctions between severity levels
+\item \strong{Information gain}: More efficient use of patient data for dose-finding decisions
+}
+
+\strong{Equivalent Toxicity/Efficacy Score Framework:}
+The design converts ordinal categories into continuous scores:
+\itemize{
+\item \strong{ETS (Equivalent Toxicity Score)}: Relative severity of different toxicity grades
+\item \strong{EES (Equivalent Efficacy Score)}: Relative effectiveness of different efficacy outcomes
+\item \strong{Normalized scores (nETS, nEES)}: Standardized to a scale ranging from 0 to 1 (quasi-Bernoulli probability)
+}
+
+\strong{Decision Algorithm:}
+Uses the same boundary-based logic as BOIN-ET but applied to normalized scores:
+\itemize{
+\item \strong{Escalate}: When nETS <= lambda1 AND nEES <= eta1
+\item \strong{Stay}: When lambda1 < nETS < lambda2 AND nEES > eta1
+\item \strong{De-escalate}: When nETS >= lambda2
+\item \strong{Efficacy-guided}: When lambda1 < nETS < lambda2 AND nEES <= eta1
+}
+
+\strong{Key Advantages:}
+
+\strong{1. Enhanced Discrimination:}
+\itemize{
+\item Better differentiation between dose levels with similar binary rates
+\item Captures clinically meaningful severity gradations
+}
+
+\strong{2. Clinical Relevance:}
+\itemize{
+\item Aligns with clinical practice where severity matters
+\item Better reflection of risk-benefit trade-offs
+}
+
+\strong{3. Regulatory Appeal:}
+\itemize{
+\item Utilizes standard grading systems (CTCAE, RECIST)
+\item Transparent scoring methodology
+\item Maintains model-assisted design simplicity
+}
+
+\strong{Weight Selection:}
+
+\strong{Example of Toxicity Weights (sev.weight):}
+Should reflect clinical impact and patient burden:
+\itemize{
+\item \strong{Grade 0 and 1}: 0.0
+\item \strong{Grade 2}: 0.5
+\item \strong{Grade 3}: 1.0
+\item \strong{Grade 4}: 1.5
+}
+
+\strong{Example of Efficacy Weights (res.weight):}
+Should reflect clinical benefit and durability:
+\itemize{
+\item \strong{PD}: 0.0
+\item \strong{SD}: 0.25
+\item \strong{PR}: 1.0
+\item \strong{CR}: 3.0
+}
+
+\strong{When to Use gBOIN-ET vs TITE-gBOIN-ET:}
+
+\strong{Choose gBOIN-ET when:}
+\itemize{
+\item Outcomes occur within reasonable assessment windows
+\item Patient accrual allows waiting for complete outcome assessment
+\item Preference for simpler, well-established approaches
+}
+
+\strong{Choose TITE-gBOIN-ET when:}
+\itemize{
+\item Late-onset outcomes are expected
+\item Rapid accrual necessitates continuous enrollment
+\item Trial duration constraints are critical
+}
+}
+\note{
+\itemize{
+\item Matrix inputs require careful validation - rows must sum to 1.0
+\item Weight selection should involve clinical stakeholders and reflect patient preferences
+\item Normalized equivalent scores may not directly correspond to familiar probability scales
+}
 }
 \examples{
-n.dose      <- 6
+# Example 1: Targeted therapy with hepatotoxicity grading
+# Scenario: Kinase inhibitor with dose-dependent liver toxicity
+
+n.dose      <- 5
 start.dose  <- 1
-size.cohort <- 3
+size.cohort <- 4  # Slightly larger for ordinal information
 n.cohort    <- 12
 
-toxprob <- rbind(c(0.94,0.87,0.79,0.68,0.62,0.50),
-                 c(0.05,0.10,0.15,0.20,0.20,0.20),
-                 c(0.01,0.03,0.05,0.10,0.15,0.25),
-                 c(0.00,0.00,0.01,0.02,0.03,0.05))
-effprob <- rbind(c(0.64,0.52,0.45,0.35,0.20,0.05),
-                 c(0.30,0.40,0.40,0.40,0.40,0.15),
-                 c(0.05,0.05,0.10,0.15,0.20,0.35),
-                 c(0.01,0.03,0.05,0.10,0.20,0.45))
+# Hepatotoxicity categories: Normal, Grade 1, Grade 2, Grade 3+
+# Progressive increase in severe hepatotoxicity with dose
+toxprob <- rbind(
+  c(0.85, 0.70, 0.50, 0.35, 0.20),  # Normal LFTs
+  c(0.12, 0.20, 0.25, 0.25, 0.20),  # Grade 1 elevation
+  c(0.02, 0.08, 0.20, 0.30, 0.40),  # Grade 2 elevation
+  c(0.01, 0.02, 0.05, 0.10, 0.20)   # Grade 3+ hepatotoxicity
+)
 
-sev.weight <- c(0.00,0.50,1.00,1.50)
-res.weight <- c(0.00,0.25,1.00,3.00)
+# Response categories: PD, SD, PR, CR
+# Plateau in efficacy at higher doses
+effprob <- rbind(
+  c(0.70, 0.50, 0.30, 0.25, 0.30),  # Progressive disease
+  c(0.25, 0.35, 0.40, 0.35, 0.35),  # Stable disease
+  c(0.04, 0.12, 0.25, 0.30, 0.25),  # Partial response
+  c(0.01, 0.03, 0.05, 0.10, 0.10)   # Complete response
+)
 
-phi   <- 0.33
-delta <- 0.70
+# Hepatotoxicity severity weights (clinical practice-based)
+sev.weight <- c(0.0, 0.3, 1.0, 3.0)  # Strong penalty for Grade 3+
+res.weight <- c(0.0, 0.2, 1.5, 3.5)  # Preference for objective responses
 
-tau.T   <- 30
-tau.E   <- 45
-accrual <- 10
+# Moderate toxicity tolerance for targeted therapy
+phi   <- 0.60  # Accept moderate weighted hepatotoxicity
+delta <- 0.80  # Target meaningful weighted efficacy
 
-estpt.method <- "obs.prob"
-obd.method   <- "max.effprob"
+# Standard assessment windows for targeted therapy
+tau.T   <- 42   # 6 weeks for LFT monitoring
+tau.E   <- 56   # 8 weeks for response assessment
+accrual <- 7    # Weekly enrollment
 
-n.sim <- 10
+results_tki <- gboinet(
+  n.dose = n.dose, start.dose = start.dose,
+  size.cohort = size.cohort, n.cohort = n.cohort,
+  toxprob = toxprob, effprob = effprob,
+  sev.weight = sev.weight, res.weight = res.weight,
+  phi = phi, delta = delta,
+  tau.T = tau.T, tau.E = tau.E, accrual = accrual,
+  estpt.method = "obs.prob",
+  obd.method = "utility.weighted",
+  w1 = 0.4, w2 = 1.2,
+  n.sim = 100
+)
 
-gboinet(
-  n.dose=n.dose, start.dose=start.dose,
-  size.cohort=size.cohort, n.cohort=n.cohort,
-  toxprob=toxprob, effprob=effprob,
-  sev.weight=sev.weight, res.weight=res.weight,
-  phi=phi, delta=delta,
-  tau.T=tau.T, tau.E=tau.E, accrual=accrual,
-  estpt.method=estpt.method, obd.method=obd.method,
-  n.sim=n.sim)
+# Display normalized equivalent scores (true values)
+cat("True Normalized Equivalent Scores:\\\\n")
+cat("nETS (Toxicity):", round(results_tki$nETS, 2), "\\\\n")
+cat("nEES (Efficacy):", round(results_tki$nEES, 2), "\\\\n")
+
+# Example 2: Chemotherapy with neuropathy grading
+# Scenario: Taxane with cumulative peripheral neuropathy
+
+n.dose      <- 4
+size.cohort <- 6  # Larger cohorts for safety
+n.cohort    <- 8
+
+# Neuropathy categories: None, Mild, Moderate, Severe
+# Cumulative dose-dependent neuropathy
+toxprob <- rbind(
+  c(0.75, 0.55, 0.35, 0.20),  # No neuropathy
+  c(0.20, 0.30, 0.35, 0.30),  # Mild neuropathy
+  c(0.04, 0.12, 0.25, 0.35),  # Moderate neuropathy
+  c(0.01, 0.03, 0.05, 0.15)   # Severe neuropathy
+)
+
+# Response categories: No response, Minor, Major, Complete
+effprob <- rbind(
+  c(0.60, 0.40, 0.25, 0.20),  # No response
+  c(0.30, 0.35, 0.35, 0.30),  # Minor response
+  c(0.08, 0.20, 0.30, 0.35),  # Major response
+  c(0.02, 0.05, 0.10, 0.15)   # Complete response
+)
+
+# Neuropathy-specific weights (functional impact)
+sev.weight <- c(0.0, 0.4, 1.2, 2.8)  # Severe neuropathy major QoL impact
+res.weight <- c(0.0, 0.3, 1.8, 3.2)  # Complete response highly valued
+
+phi   <- 0.50  # Moderate neuropathy tolerance
+delta <- 0.80  # Target substantial response
+
+tau.T   <- 84   # 12 weeks for neuropathy development
+tau.E   <- 56   # 8 weeks for response assessment
+accrual <- 14   # Bi-weekly enrollment
+
+results_chemo <- gboinet(
+  n.dose = n.dose, start.dose = start.dose,
+  size.cohort = size.cohort, n.cohort = n.cohort,
+  toxprob = toxprob, effprob = effprob,
+  sev.weight = sev.weight, res.weight = res.weight,
+  phi = phi, delta = delta,
+  tau.T = tau.T, tau.E = tau.E, accrual = accrual,
+  estpt.method = "obs.prob",
+  obd.method = "utility.truncated.linear",
+  n.sim = 100
+)
+
+# Compare with binary approximation
+binary_tox <- 1 - toxprob[1,]  # Any neuropathy
+binary_eff <- effprob[3,] + effprob[4,]  # Major + Complete response
+
+cat("Ordinal vs Binary Information:\\\\n")
+cat("Binary toxicity rates:", round(binary_tox, 2), "\\\\n")
+cat("Ordinal nETS scores:", round(results_chemo$nETS, 2), "\\\\n")
+cat("Binary efficacy rates:", round(binary_eff, 2), "\\\\n")
+cat("Ordinal nEES scores:", round(results_chemo$nEES, 2), "\\\\n")
+
 }
 \references{
-Takeda K, Morita S, Taguri M. gBOIN-ET: The generalized Bayesian optimal
-interval design for optimal dose-finding accounting for ordinal graded
-efficacy and toxicity in early clinical trials. \emph{Biometrical Journal} 2022:
-64(7):1178-1191.
-
-Yamaguchi Y, Takeda K, Yoshida S, Maruo K. Optimal biological dose selection
-in dose-finding trials with model-assisted designs based on efficacy and
-toxicity: a simulation study. \emph{Journal of Biopharmaceutical Statistics} 2023;
-doi: 10.1080/10543406.2023.2202259.
+\itemize{
+\item Takeda, K., Morita, S., & Taguri, M. (2022). gBOIN-ET: The generalized
+Bayesian optimal interval design for optimal dose-finding accounting for
+ordinal graded efficacy and toxicity in early clinical trials.
+\emph{Biometrical Journal}, 64(7), 1178-1191.
+\item Yamaguchi, Y., Takeda, K., Yoshida, S., & Maruo, K. (2024). Optimal
+biological dose selection in dose-finding trials with model-assisted designs
+based on efficacy and toxicity: a simulation study. \emph{Journal of
+Biopharmaceutical Statistics}, 34(3), 379-393.
 }
+}
+\seealso{
+\code{\link{tite.gboinet}} for time-to-event version with ordinal outcomes,
+\code{\link{boinet}} for binary outcome version,
+\code{\link{obd.select}} for dose selection methods,
+\code{\link{utility.weighted}}, \code{\link{utility.truncated.linear}},
+\code{\link{utility.scoring}} for utility functions.
+}
+\keyword{clinical-trials}
+\keyword{dose-finding}
+\keyword{gBOIN-ET}
+\keyword{graded-endpoints}
+\keyword{ordinal-outcomes}

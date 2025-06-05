@@ -2,60 +2,176 @@
 % Please edit documentation in R/obd.select.R
 \name{obd.select}
 \alias{obd.select}
-\title{Optimal biological dose selection}
+\title{Optimal Biological Dose Selection}
 \usage{
 obd.select(
   probt, probe, method,
-  phi, phi1, phi2, delta, delta1,
+  phi, phi1, phi2,
+  delta, delta1,
   tterm, eterm, stopT, stopE,
   w1, w2,
-  plow.ast, pupp.ast, qlow.ast, qupp.ast,
+  plow.ast, pupp.ast,
+  qlow.ast, qupp.ast,
   psi00, psi11)
 }
 \arguments{
-\item{probt}{Estimated toxicity probability.}
+\item{probt}{Numeric vector of estimated toxicity probabilities for each dose level.
+Values should be between 0 and 1.}
 
-\item{probe}{Estimated efficacy probability.}
+\item{probe}{Numeric vector of estimated efficacy probabilities for each dose level.
+Values should be between 0 and 1. Must have same length as \code{probt}.}
 
-\item{method}{Method used for OBD selection.}
+\item{method}{Character string specifying the method for OBD selection. Must be one of:
+\code{"utility.weighted"}, \code{"utility.truncated.linear"},
+\code{"utility.scoring"}, or \code{"max.effprob"}.}
 
-\item{phi}{Target toxicity probability.}
+\item{phi}{Target toxicity probability (used in "max.effprob" method).}
 
-\item{phi1}{Lower bound of toxicity probability.}
+\item{phi1}{Lower bound of acceptable toxicity probability range.
+Used for defining toxicity intervals in some methods.}
 
-\item{phi2}{Upper bound of toxicity probability.}
+\item{phi2}{Upper bound of acceptable toxicity probability range.
+Used as toxicity threshold in "utility.weighted" method.}
 
 \item{delta}{Target efficacy probability.}
 
-\item{delta1}{Lower bound of efficacy probability.}
+\item{delta1}{Lower bound of acceptable efficacy probability range.}
 
-\item{tterm}{Probability of meeting toxicity stopping criteria.}
+\item{tterm}{Numeric vector of probabilities of meeting toxicity stopping criteria
+for each dose. Same length as \code{probt}.}
 
-\item{eterm}{Probability of meeting efficacy stopping criteria.}
+\item{eterm}{Numeric vector of probabilities of meeting efficacy stopping criteria
+for each dose. Same length as \code{probe}.}
 
-\item{stopT}{Toxicity stopping criteria.}
+\item{stopT}{Toxicity stopping threshold. Doses are excluded if
+\code{tterm < (1 - stopT)}.}
 
-\item{stopE}{Efficacy stopping criteria.}
+\item{stopE}{Efficacy stopping threshold. Doses are excluded if
+\code{eterm < (1 - stopE)}.}
 
-\item{w1}{Weight for toxicity-efficacy trade-off.}
+\item{w1}{Weight parameter for toxicity-efficacy trade-off in "utility.weighted" method.
+Higher values emphasize efficacy more heavily.}
 
-\item{w2}{Weight for penalty imposed on toxic doses.}
+\item{w2}{Weight parameter for penalty imposed on toxic doses in "utility.weighted" method.
+Higher values penalize toxicity more heavily.}
 
-\item{plow.ast}{Lower threshold of toxicity linear truncated function.}
+\item{plow.ast}{Lower threshold of toxicity for the linear truncated utility function
+(used in "utility.truncated.linear" method).}
 
-\item{pupp.ast}{Upper threshold of toxicity linear truncated function.}
+\item{pupp.ast}{Upper threshold of toxicity for the linear truncated utility function
+(used in "utility.truncated.linear" method).}
 
-\item{qlow.ast}{Lower threshold of efficacy linear truncated function.}
+\item{qlow.ast}{Lower threshold of efficacy for the linear truncated utility function
+(used in "utility.truncated.linear" method).}
 
-\item{qupp.ast}{Upper threshold of efficacy linear truncated function.}
+\item{qupp.ast}{Upper threshold of efficacy for the linear truncated utility function
+(used in "utility.truncated.linear" method).}
 
-\item{psi00}{Score for toxicity=no and efficacy=no.}
+\item{psi00}{Utility score for the outcome (toxicity=FALSE, efficacy=FALSE)
+in "utility.scoring" method.}
 
-\item{psi11}{Score for toxicity=yes and efficacy=yes.}
+\item{psi11}{Utility score for the outcome (toxicity=TRUE, efficacy=TRUE)
+in "utility.scoring" method.}
 }
 \value{
-The \code{obd.select} returns an optimal biological dose.
+Integer value representing the index of the selected optimal biological dose.
+The returned value corresponds to the position in the input vectors \code{probt}
+and \code{probe}. If no dose meets the stopping criteria, the function behavior
+depends on the implementation of the underlying utility functions.
 }
 \description{
-Optimal biological dose (OBD) is selected by a method specified.
+Selects the optimal biological dose (OBD) from a set of candidate doses by balancing
+toxicity and efficacy considerations using various utility-based methods. The OBD is
+the dose that optimizes the risk-benefit trade-off, typically used in oncology trials
+where both safety and therapeutic effect must be considered simultaneously.
+}
+\details{
+The function implements four different methods for OBD selection:
+
+\strong{Method 1: "utility.weighted"}
+Uses a weighted utility function that combines toxicity and efficacy probabilities
+with user-specified weights. Higher weight on w1 emphasizes efficacy, while higher
+weight on w2 penalizes toxicity more heavily.
+
+\strong{Method 2: "utility.truncated.linear"}
+Employs piecewise linear utility functions with truncation points for both toxicity
+and efficacy. This method allows for more flexible modeling of the utility surface
+with different slopes in different probability ranges.
+
+\strong{Method 3: "utility.scoring"}
+Uses a discrete scoring system based on four possible outcomes: (no toxicity, no efficacy),
+(no toxicity, efficacy), (toxicity, no efficacy), and (toxicity, efficacy).
+
+\strong{Method 4: "max.effprob"}
+Maximizes efficacy probability among doses with acceptable toxicity profiles.
+First identifies the maximum tolerated dose (MTD), then selects the dose with
+highest efficacy probability among acceptable doses.
+
+The function only considers doses that meet both toxicity and efficacy stopping
+criteria (controlled by stopT and stopE parameters).
+}
+\note{
+\itemize{
+\item All probability vectors (\code{probt}, \code{probe}, \code{tterm}, \code{eterm})
+must have the same length.
+\item Only doses that satisfy both \code{tterm >= (1-stopT)} and
+\code{eterm >= (1-stopE)} are considered as candidates.
+\item If multiple doses have the same maximum utility, the function returns
+the lowest dose index among them.
+\item Required parameters vary by method - ensure appropriate parameters are
+provided for the selected method.
+}
+}
+\examples{
+# Example 1: Using utility.weighted method
+probt <- c(0.05, 0.15, 0.30, 0.50, 0.65)
+probe <- c(0.10, 0.25, 0.45, 0.60, 0.55)
+tterm <- c(0.95, 0.90, 0.85, 0.75, 0.60)
+eterm <- c(0.90, 0.85, 0.80, 0.85, 0.70)
+
+obd_weighted <- obd.select(
+  probt = probt, probe = probe,
+  method = "utility.weighted",
+  phi2 = 0.35, w1 = 1.0, w2 = 0.5,
+  tterm = tterm, eterm = eterm,
+  stopT = 0.10, stopE = 0.10
+)
+
+# Example 2: Using max.effprob method
+obd_maxeff <- obd.select(
+  probt = probt, probe = probe,
+  method = "max.effprob",
+  phi = 0.30,
+  tterm = tterm, eterm = eterm,
+  stopT = 0.10, stopE = 0.10
+)
+
+# Example 3: Using utility.scoring method
+obd_scoring <- obd.select(
+  probt = probt, probe = probe,
+  method = "utility.scoring",
+  psi00 = 0, psi11 = 60,
+  tterm = tterm, eterm = eterm,
+  stopT = 0.10, stopE = 0.10
+)
+
+}
+\references{
+\itemize{
+\item Thall, P. F., & Cook, J. D. (2004). Dose-finding based on efficacy-toxicity
+trade-offs. \emph{Biometrics}, 60(3), 684-693.
+\item Yin, G., Li, Y., & Ji, Y. (2006). Bayesian dose-finding in phase I/II
+clinical trials using toxicity and efficacy odds ratios.
+\emph{Biometrics}, 62(3), 777-784.
+\item Houede, N., Thall, P. F., Nguyen, H., Paoletti, X., & Kramar, A. (2010).
+Utility-based optimization of combination therapy using ordinal toxicity
+and efficacy in phase I/II trials. \emph{Biometrics}, 66(2), 532-540.
+\item Zhou, H., Murray, T. A., Pan, H., & Yuan, Y. (2018). Comparative review of
+novel model-assisted designs for phase I clinical trials.
+\emph{Statistics in Medicine}, 37(20), 2892-2922.
+}
+}
+\seealso{
+\code{\link{utility.weighted}}, \code{\link{utility.truncated.linear}},
+\code{\link{utility.scoring}} for the underlying utility functions.
 }

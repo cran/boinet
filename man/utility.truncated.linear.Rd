@@ -2,28 +2,166 @@
 % Please edit documentation in R/utility.truncated.linear.R
 \name{utility.truncated.linear}
 \alias{utility.truncated.linear}
-\title{Utility defined by truncated linear function}
+\title{Truncated Linear Utility Function for Toxicity-Efficacy Trade-offs}
 \usage{
 utility.truncated.linear(probt, probe, tlow, tupp, elow, eupp)
 }
 \arguments{
-\item{probt}{Estimated toxicity probability}
+\item{probt}{Numeric vector of estimated toxicity probabilities for each dose.
+Values should be between 0 and 1.}
 
-\item{probe}{Estimated efficacy probability}
+\item{probe}{Numeric vector of estimated efficacy probabilities for each dose.
+Values should be between 0 and 1. Must have same length as \code{probt}.}
 
-\item{tlow}{Lower threshold of toxicity linear truncated function.}
+\item{tlow}{Numeric value specifying the lower toxicity threshold. Toxicity
+probabilities at or below this level receive no penalty (utility component = 1).
+Should be less than \code{tupp}.}
 
-\item{tupp}{Upper threshold of toxicity linear truncated function.}
+\item{tupp}{Numeric value specifying the upper toxicity threshold. Toxicity
+probabilities at or above this level receive maximum penalty (utility component = 0).
+Should be greater than \code{tlow}.}
 
-\item{elow}{Lower threshold of efficacy linear truncated function.}
+\item{elow}{Numeric value specifying the lower efficacy threshold. Efficacy
+probabilities at or below this level provide no benefit (utility component = 0).
+Should be less than \code{eupp}.}
 
-\item{eupp}{Upper threshold of efficacy linear truncated function.}
+\item{eupp}{Numeric value specifying the upper efficacy threshold. Efficacy
+probabilities at or above this level provide maximum benefit (utility component = 1).
+Should be greater than \code{elow}.}
 }
 \value{
-The \code{utility.truncated.linear} returns a utility value defined by
-the truncated linear functions.
+Numeric vector of utility values for each dose, with the same length as the
+input probability vectors. Values range between 0 and 1, where higher values
+indicate more desirable doses. The utility is the product of transformed
+efficacy and toxicity components.
 }
 \description{
-Given estimated toxicity and efficacy probabilities, the utility which is
-defined by truncated linear functions is Calculated.
+Calculates utility scores using truncated linear functions that provide flexible,
+piecewise-linear relationships between toxicity/efficacy probabilities and their
+respective utility contributions. This approach allows for different slopes in
+different probability ranges, making it suitable for scenarios where the
+clinical importance of toxicity or efficacy changes non-linearly across the
+probability spectrum.
+
+The truncated linear utility function is particularly valuable when clinical
+preferences exhibit threshold effects, where small changes in probability
+may have dramatically different clinical implications depending on the
+probability range.
+}
+\details{
+\strong{Mathematical Formulation:}
+
+The utility function combines separate piecewise linear transformations for
+toxicity and efficacy:
+
+\deqn{U(p_T, p_E) = f_E(p_E) \times f_T(p_T)}
+
+Where the efficacy transformation \eqn{f_E(p_E)} is:
+\deqn{f_E(p_E) = \begin{cases}
+0 & \text{if } p_E <= e_{low} \\
+\frac{p_E - e_{low}}{e_{upp} - e_{low}} & \text{if } e_{low} < p_E < e_{upp} \\
+1 & \text{if } p_E >= e_{upp}
+\end{cases}}
+
+And the toxicity transformation \eqn{f_T(p_T)} is:
+\deqn{f_T(p_T) = \begin{cases}
+1 & \text{if } p_T <= t_{low} \\
+1 - \frac{p_T - t_{low}}{t_{upp} - t_{low}} & \text{if } t_{low} < p_T < t_{upp} \\
+0 & \text{if } p_T >= t_{upp}
+\end{cases}}
+
+\strong{Component Interpretations:}
+
+\strong{Efficacy Function \eqn{f_E(p_E)}:}
+\itemize{
+\item \strong{Below \eqn{e_{low}}}: No clinical benefit (utility = 0)
+\item \strong{Between thresholds}: Linear increase in benefit
+\item \strong{Above \eqn{e_{upp}}}: Maximum benefit achieved (utility = 1)
+\item \strong{Slope}: \eqn{1/(e_{upp} - e_{low})} represents rate of benefit increase
+}
+
+\strong{Toxicity Function \eqn{f_T(p_T)}:}
+\itemize{
+\item \strong{Below \eqn{t_{low}}}: Minimal toxicity concern (utility = 1)
+\item \strong{Between thresholds}: Linear decrease in acceptability
+\item \strong{Above \eqn{t_{upp}}}: Unacceptable toxicity (utility = 0)
+\item \strong{Slope}: \eqn{-1/(t_{upp} - t_{low})} represents rate of penalty increase
+}
+
+\strong{Comparison with Other Utility Methods:}
+
+\strong{vs. Weighted Utility:}
+\itemize{
+\item More flexible functional form
+\item Handles threshold effects better
+\item Requires more parameter tuning
+\item Less intuitive for simple trade-offs
+}
+
+\strong{vs. Scoring Utility:}
+\itemize{
+\item Continuous rather than discrete
+\item Better for probability-based decisions
+\item More complex parameter specification
+\item Can handle intermediate probability values
+}
+}
+\note{
+\itemize{
+\item Threshold parameters must satisfy: tlow < tupp and elow < eupp
+\item The function returns the product of efficacy and toxicity transformations
+\item Utility values are bounded between 0 and 1
+\item Threshold selection significantly impacts dose selection behavior
+}
+}
+\examples{
+toxicity_probs <- c(0.05, 0.15, 0.25, 0.40, 0.55)
+efficacy_probs <- c(0.10, 0.25, 0.45, 0.60, 0.65)
+
+# Clinical thresholds based on disease context
+tox_low <- 0.10   # Below 10\% toxicity: minimal concern
+tox_upp <- 0.45   # Above 45\% toxicity: major concern
+eff_low <- 0.15   # Below 15\% efficacy: clinically negligible
+eff_upp <- 0.55   # Above 55\% efficacy: highly satisfactory
+
+utilities <- utility.truncated.linear(
+  probt = toxicity_probs, probe = efficacy_probs,
+  tlow = tox_low, tupp = tox_upp,
+  elow = eff_low, eupp = eff_upp
+)
+
+# Display results with transformations
+results <- data.frame(
+  Dose = 1:5,
+  Toxicity = toxicity_probs,
+  Efficacy = efficacy_probs,
+  Tox_Transform = ifelse(toxicity_probs <= tox_low, 1,
+                  ifelse(toxicity_probs >= tox_upp, 0,
+                         1 - (toxicity_probs - tox_low)/(tox_upp - tox_low))),
+  Eff_Transform = ifelse(efficacy_probs <= eff_low, 0,
+                  ifelse(efficacy_probs >= eff_upp, 1,
+                         (efficacy_probs - eff_low)/(eff_upp - eff_low))),
+  Utility = round(utilities, 3)
+)
+print(results)
+
+# Optimal dose selection
+optimal_dose <- which.max(utilities)
+cat("\\\\nOptimal dose:", optimal_dose, "with utility:",
+    round(max(utilities), 3), "\\\\n")
+
+}
+\references{
+\itemize{
+\item Houede, N., Thall, P. F., Nguyen, H., Paoletti, X., & Kramar, A. (2010).
+Utility-based optimization of combination therapy using ordinal toxicity
+and efficacy in phase I/II trials. \emph{Biometrics}, 66(2), 532-540.
+\item Thall, P. F., & Cook, J. D. (2004). Dose-finding based on efficacy-toxicity
+trade-offs. \emph{Biometrics}, 60(3), 684-693.
+}
+}
+\seealso{
+\code{\link{utility.weighted}} for simpler weighted trade-off approach,
+\code{\link{utility.scoring}} for discrete outcome scoring method,
+\code{\link{obd.select}} for optimal biological dose selection using utilities.
 }
