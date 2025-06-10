@@ -1,3 +1,8 @@
+# boinet 1.3.0
+
+* Fixed a bug in extract_operating_characteristics(), extract_design_summary(),
+create_oc_gt_table(), and create_design_gt_table(), regarding the table creation.
+
 # boinet 1.2.0
 
 * Updated descriptions of stopping.prob.T and stopping.prob.E in boinet(), gboinet(),

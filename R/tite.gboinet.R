@@ -206,7 +206,7 @@
 #' \item{duration}{Expected trial duration in days.}
 #'
 #' @examples
-#' # Example 1: CAR-T therapy with graded CRS and response levels
+#' # Example: CAR-T therapy with graded CRS and response levels
 #' # Scenario: 4 dose levels with detailed toxicity/efficacy grading
 #'
 #' n.dose      <- 4
@@ -273,61 +273,6 @@
 #'
 #' cat("OBD Selection Probabilities:\\n")
 #' print(results_cart$prop.select)
-#'
-#' # Example 2: Immunotherapy with immune-related adverse events
-#' # Scenario: Detailed immune toxicity and response grading
-#'
-#' n.dose      <- 5
-#' size.cohort <- 3
-#' n.cohort    <- 15
-#'
-#' # irAE categories: None, Grade 1, Grade 2, Grade 3+
-#' toxprob <- rbind(
-#'   c(0.80, 0.65, 0.45, 0.30, 0.20),  # No irAE
-#'   c(0.15, 0.25, 0.35, 0.35, 0.30),  # Grade 1 irAE
-#'   c(0.04, 0.08, 0.15, 0.25, 0.35),  # Grade 2 irAE
-#'   c(0.01, 0.02, 0.05, 0.10, 0.15)   # Grade 3+ irAE
-#' )
-#'
-#' # Response categories: PD, SD, PR, CR
-#' effprob <- rbind(
-#'   c(0.60, 0.45, 0.30, 0.25, 0.30),  # Progressive disease
-#'   c(0.30, 0.35, 0.35, 0.30, 0.25),  # Stable disease
-#'   c(0.08, 0.15, 0.25, 0.30, 0.30),  # Partial response
-#'   c(0.02, 0.05, 0.10, 0.15, 0.15)   # Complete response
-#' )
-#'
-#' # Immunotherapy-appropriate weights
-#' sev.weight <- c(0.0, 0.2, 0.8, 2.0)  # Strong penalty for Grade 3+ irAE
-#' res.weight <- c(0.0, 0.1, 1.0, 2.5)  # Prefer objective responses
-#'
-#' phi   <- 0.50  # Accept moderate irAE burden
-#' delta <- 0.80  # Target meaningful response
-#'
-#' tau.T   <- 112  # 16 weeks for irAE development
-#' tau.E   <- 84   # 12 weeks for response assessment
-#' accrual <- 10   # Weekly enrollment
-#'
-#' results_immuno <- tite.gboinet(
-#'   n.dose = n.dose, start.dose = start.dose,
-#'   size.cohort = size.cohort, n.cohort = n.cohort,
-#'   toxprob = toxprob, effprob = effprob,
-#'   sev.weight = sev.weight, res.weight = res.weight,
-#'   phi = phi, delta = delta,
-#'   tau.T = tau.T, tau.E = tau.E, accrual = accrual,
-#'   estpt.method = "fp.logistic",  # Smooth dose-response
-#'   obd.method = "utility.truncated.linear",
-#'   n.sim = 40
-#' )
-#'
-#' # Display normalized equivalent scores
-#' cat("Normalized Equivalent Toxicity Scores (nETS):\\n")
-#' print(results_immuno$nETS)
-#' cat("Normalized Equivalent Efficacy Scores (nEES):\\n")
-#' print(results_immuno$nEES)
-#'
-#' cat("OBD Selection Probabilities:\\n")
-#' print(results_immuno$prop.select)
 #'
 #' @note
 #' \itemize{

@@ -18,18 +18,3 @@ n_patients, selection_prob, selection_pct
 Converts boinet simulation results into a tidy data frame suitable for
 analysis and reporting.
 }
-\examples{
-\dontrun{
-# Run BOIN-ET simulation
-result <- tite.boinet(
-  n.dose = 4, start.dose = 1, size.cohort = 3, n.cohort = 10,
-  toxprob = c(0.05, 0.15, 0.25, 0.40),
-  effprob = c(0.15, 0.30, 0.45, 0.60),
-  phi = 0.30, delta = 0.60, n.sim = 100
-)
-
-# Extract in tidy format
-oc_data <- extract_operating_characteristics(result)
-print(oc_data)
-}
-}

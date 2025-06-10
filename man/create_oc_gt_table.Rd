@@ -18,10 +18,3 @@ A gt table object
 Creates a formatted gt table displaying operating characteristics from
 boinet simulation results.
 }
-\examples{
-\dontrun{
-result <- tite.boinet(...)
-table <- create_oc_gt_table(result, "My Trial Results")
-print(table)
-}
-}

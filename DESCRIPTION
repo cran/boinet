@@ -1,5 +1,5 @@
 Package: boinet
-Version: 1.2.0
+Version: 1.3.0
 Title: Conduct Simulation Study of Bayesian Optimal Interval Design
         with BOIN-ET Family
 Authors@R: c(
@@ -21,9 +21,9 @@ Suggests: testthat (>= 3.0.0), knitr, rmarkdown, dplyr (>= 1.0.0),
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2025-06-05 21:01:19 UTC; API18340
+Packaged: 2025-06-10 00:11:51 UTC; API18340
 Author: Yusuke Yamaguchi [aut, cre],
   Kentaro Takeda [aut]
 Maintainer: Yusuke Yamaguchi <yamagubed@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-06-05 21:10:02 UTC
+Date/Publication: 2025-06-10 07:10:02 UTC

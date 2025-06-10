@@ -1,4 +1,3 @@
-
 #' Create GT Table for Operating Characteristics
 #'
 #' Creates a formatted gt table displaying operating characteristics from
@@ -10,36 +9,57 @@
 #' @importFrom gt gt tab_header cols_label fmt_percent fmt_number cols_hide
 #'   tab_style cell_text cells_column_labels tab_options
 #' @export
-#' @examples
-#' \dontrun{
-#' result <- tite.boinet(...)
-#' table <- create_oc_gt_table(result, "My Trial Results")
-#' print(table)
-#' }
 create_oc_gt_table <- function(boinet_result, title = "Operating Characteristics") {
   # Check if gt is available
   if (!requireNamespace("gt", quietly = TRUE)) {
-    stop("Package 'gt' is required for this function. Install with: install.packages('gt')")
+    warning("Package 'gt' is required for this function. Returning data frame instead.")
+    return(extract_operating_characteristics(boinet_result))
   }
 
+  # Determine if this is a graded function by checking for matrix toxprob
+  is_graded <- "toxprob" %in% names(boinet_result) && is.matrix(boinet_result$toxprob)
+
+  # Extract operating characteristics
   oc_data <- extract_operating_characteristics(boinet_result)
 
-  gt_table <- oc_data |>
-    gt::gt() |>
-    gt::tab_header(title = title) |>
-    gt::cols_label(
-      dose_level = "Dose Level",
-      toxicity_prob = "True Toxicity Probability",
-      efficacy_prob = "True Efficacy Probability",
-      n_patients = "Average N Treated",
-      selection_prob = "Selection Probability (%)",
-      selection_pct = "Selection %"
-    ) |>
+  # Create GT table with appropriate column labels
+  if (is_graded) {
+    # For gboinet/tite.gboinet: use nETS/nEES labels
+    gt_table <- oc_data |>
+      gt::gt() |>
+      gt::tab_header(title = title) |>
+      gt::cols_label(
+        dose_level = "Dose Level",
+        toxicity_prob = "nETS",
+        efficacy_prob = "nEES",
+        n_patients = "Average N Treated",
+        selection_prob = "Selection Probability"
+      ) |>
+      gt::fmt_number(
+        columns = c("toxicity_prob", "efficacy_prob"),
+        decimals = 3
+      )
+  } else {
+    # For boinet/tite.boinet: use probability labels
+    gt_table <- oc_data |>
+      gt::gt() |>
+      gt::tab_header(title = title) |>
+      gt::cols_label(
+        dose_level = "Dose Level",
+        toxicity_prob = "True Toxicity Probability",
+        efficacy_prob = "True Efficacy Probability",
+        n_patients = "Average N Treated",
+        selection_prob = "Selection Probability"
+      ) |>
+      gt::fmt_percent(
+        columns = c("toxicity_prob", "efficacy_prob"),
+        decimals = 1
+      )
+  }
+
+  # Apply common formatting
+  gt_table <- gt_table |>
     gt::fmt_percent(
-      columns = c("toxicity_prob", "efficacy_prob"),
-      decimals = 1
-    ) |>
-    gt::fmt_number(
       columns = "selection_prob",
       decimals = 1
     ) |>
@@ -72,21 +92,20 @@ create_oc_gt_table <- function(boinet_result, title = "Operating Characteristics
 #' @export
 create_design_gt_table <- function(boinet_result, title = "Design Parameters") {
   if (!requireNamespace("gt", quietly = TRUE)) {
-    stop("Package 'gt' is required for this function. Install with: install.packages('gt')")
+    warning("Package 'gt' is required for this function. Returning data frame instead.")
+    return(extract_design_summary(boinet_result))
   }
 
+  # Extract design data
   design_data <- extract_design_summary(boinet_result)
 
+  # Create GT table
   gt_table <- design_data |>
     gt::gt() |>
     gt::tab_header(title = title) |>
     gt::cols_label(
       parameter = "Parameter",
       value = "Value"
-    ) |>
-    gt::fmt_number(
-      columns = "value",
-      decimals = 2
     ) |>
     gt::tab_style(
       style = gt::cell_text(weight = "bold"),
