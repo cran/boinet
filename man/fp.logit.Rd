@@ -8,7 +8,7 @@ fp.logit(obs, n, dose)
 }
 \arguments{
 \item{obs}{Numeric vector of the number of patients experiencing the event of interest
-at each dose level. Must be non-negative integers.}
+or normalized equivalent efficacy score at each dose level.}
 
 \item{n}{Numeric vector of the total number of patients treated at each dose level.
 Must be positive integers. Length must match \code{obs} and \code{dose}.}

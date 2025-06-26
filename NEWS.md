@@ -1,3 +1,10 @@
+# boinet 1.4.0
+
+* Fixed a bug in fp.logit(), allowing for nEES as input.
+
+* Fixed a bug in tite.boinet(), and tite.gboinet(), removing an option of
+estpt.method="fp.logistic".
+
 # boinet 1.3.0
 
 * Fixed a bug in extract_operating_characteristics(), extract_design_summary(),

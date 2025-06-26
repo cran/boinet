@@ -183,8 +183,7 @@
 #'   the dose levels are eliminated from the investigation. Default is 0.99.
 #' @param estpt.method Character string specifying the method for estimating efficacy
 #'   probabilities. Options: "obs.prob" (observed efficacy probabilitiesrates),
-#'   "fp.logistic" (fractional polynomial), or "multi.iso" (model averaging of
-#'   multiple unimodal isotopic regression). Default is "obs.prob".
+#'   or "fp.logistic" (fractional polynomial). Default is "obs.prob".
 #' @param obd.method Character string specifying the method for OBD selection.
 #'   Options: "utility.weighted", "utility.truncated.linear", "utility.scoring",
 #'   or "max.effprob" (default).
@@ -666,10 +665,7 @@ gboinet <- function(
 
       estpt <- Iso::pava(obspt)
 
-      if(estpt.method=="multi.iso"){
-        estpe <- multi.iso(obs=obs.eff[evadose],n=obs.n[evadose])
-
-      }else if(estpt.method=="fp.logistic"){
+      if(estpt.method=="fp.logistic"){
         estpe <- fp.logit(obs=obs.eff[evadose],n=obs.n[evadose],dose=evadose)
 
       }else if(estpt.method=="obs.prob"){
