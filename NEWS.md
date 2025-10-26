@@ -1,3 +1,7 @@
+# boinet 1.5.0
+
+* Added launch.shinyapp(), launching the Shiny application.
+
 # boinet 1.4.0
 
 * Fixed a bug in fp.logit(), allowing for nEES as input.
