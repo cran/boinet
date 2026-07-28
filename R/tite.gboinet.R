@@ -652,14 +652,14 @@ tite.gboinet <- function(
         estpe <- obspe
       }
 
-      obd[ss] <- obd.select(
+      obd[ss] <- evadose[obd.select(
                    probt=estpt, probe=estpe, method=obd.method,
                    phi=phi, phi1=phi1, phi2=phi2, delta=delta, delta1=delta1,
                    tterm=tterm.obd[evadose], eterm=eterm.obd[evadose],
                    stopT=stopping.prob.T, stopE=stopping.prob.E,
                    w1=w1, w2=w2,
                    plow.ast=plow.ast, pupp.ast=pupp.ast, qlow.ast=qlow.ast, qupp.ast=qupp.ast,
-                   psi00=psi00, psi11=psi11)
+                   psi00=psi00, psi11=psi11)]
     }
   }
 

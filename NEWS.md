@@ -1,3 +1,8 @@
+# boinet 1.6.0
+
+* Fixed a bug in boinet(), gboinet(), tite.boinet(), and tite.gboinet(),
+regarding the OBD selection.
+
 # boinet 1.5.0
 
 * Added launch.shinyapp(), launching the Shiny application.
